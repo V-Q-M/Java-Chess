@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class Chess {
 
     static boolean running = true;
+    static boolean isSelecting = true;
     // IDs
     final static int emptySquare = 0;
 
@@ -22,6 +23,9 @@ public class Chess {
     final static int blackQueen = 15;
     final static int blackKing = 16;
 
+    final static int[] whitePieces = {whitePawn, whiteRook, whiteKnight, whiteBishop, whiteQueen, whiteKing};
+    final static int[] blackPieces = {blackPawn, blackRook, blackKnight, blackBishop, blackQueen, blackKing};
+
     // SETTINGS
     public static int visualStyle = 1; //0 = Double letter pieces. 1 = Unicode pieces.
 
@@ -29,8 +33,8 @@ public class Chess {
 
     static int[] pieces = new int[64]; // stores the positions of the pieces
     static int[] squareColors = new int[64];
-    boolean[] allowedMoves = new boolean[64]; // stores the allowed moves of one piece
-
+    static boolean[] allowedMoves = new boolean[64]; // stores the allowed moves of one piece
+    static boolean[] allowedAttacks = new boolean[64];
 
 
     public static void startPosition(){
@@ -74,23 +78,23 @@ public class Chess {
     public static String pieceVisuals(int pieceId){
         final String RESET = "\u001B[0m";
         final String WHITE = "\u001B[97m";
-        final String BLACK = "\u001B[96m";
+        final String BLACK = "\u001B[30m";
 
         if (visualStyle == 1){
             return switch(pieceId){
-                case whitePawn   -> "♟";
-                case whiteRook   -> "♜";
-                case whiteKnight -> "♞";
-                case whiteBishop -> "♝";
-                case whiteQueen  -> "♛";
-                case whiteKing   -> "♚";
+                case whitePawn   -> WHITE + "♟";
+                case whiteRook   -> WHITE + "♜";
+                case whiteKnight -> WHITE + "♞";
+                case whiteBishop -> WHITE + "♝";
+                case whiteQueen  -> WHITE + "♛";
+                case whiteKing   -> WHITE + "♚";
 
-                case blackPawn   -> "♙";
-                case blackRook   -> "♖";
-                case blackKnight -> "♘";
-                case blackBishop -> "♗";
-                case blackQueen  -> "♕";
-                case blackKing   -> "♔";
+                case blackPawn   -> BLACK + "♟";
+                case blackRook   -> BLACK + "♜";
+                case blackKnight -> BLACK + "♞";
+                case blackBishop -> BLACK + "♝";
+                case blackQueen  -> BLACK + "♛";
+                case blackKing   -> BLACK + "♚";
                 default -> " ";
             };
         }
@@ -115,9 +119,10 @@ public class Chess {
     public static void printBoard() {
         final String RED_BACKGROUND = "\u001B[41m";  // Red background
         final String BLUE_BACKGROUND = "\u001B[44m";  // Blue background
+        final String YELLOW_BACKGROUND = "\u001B[43m";  // Yellow background
         final String RESET = "\u001B[0m";  // Reset
         final String WHITE_BACKGROUND = "\u001B[47m";  // White background for light squares
-        final String BLACK_BACKGROUND = "\u001B[48m";  // Black background for dark squares
+        final String BLACK_BACKGROUND = "\u001B[100m";  // Black background for dark squares
         StringBuilder board = new StringBuilder();  // Use StringBuilder for better performance
 
         // Header with column labels ┌───┐
@@ -125,7 +130,7 @@ public class Chess {
 
         // Loop through the board from row 7 (top) to row 0 (bottom)
         for (int row = 7; row >= 0; row--) {
-            board.append(" " + (row + 1) + " |");  // Print the rank number at the beginning
+            board.append(" ").append(row + 1).append(" │");  // Print the rank number at the beginning
 
             // Loop through columns from 0 to 7
             for (int col = 0; col < 8; col++) {
@@ -138,15 +143,17 @@ public class Chess {
                     representation = RED_BACKGROUND + " " + representation + " " + RESET;
                 } else if (squareColors[i] == 2){
                     representation = BLUE_BACKGROUND + " " + representation + " " + RESET;
+                } else if (squareColors[i] == 3){
+                    representation = YELLOW_BACKGROUND + " " + representation + " " + RESET;
                 } else {
                     if ((row + col) % 2 == 0) {
-                        representation = WHITE_BACKGROUND + " " + representation + " " + RESET;
-                    } else {
                         representation = BLACK_BACKGROUND + " " + representation + " " + RESET;
+                    } else {
+                        representation = WHITE_BACKGROUND + " " + representation + " " + RESET;
                     }
                 }
                 // Add the piece representation with borders
-                board.append(representation + "│");
+                board.append(representation).append("│");
             }
 
             // Add row separator and move to the next line
@@ -184,7 +191,7 @@ public class Chess {
     }
 
     public static void getInput(){
-        System.out.print("Enter your move: ");
+        System.out.print("Enter your target: ");
         String moveString = scan.next(); // Get input
         System.out.println("You entered: " + moveString);
 
@@ -207,8 +214,104 @@ public class Chess {
 
     public static void gameLogic(int move){
         // squarecolor, white = 0, red = 1, blue = 2
-        squareColors[move] = 1;
+        // selection part
+        Arrays.fill(allowedMoves, false);
+        Arrays.fill(squareColors, 0);
+        if (isSelecting){
+            squareColors[move] = 3;
+
+            switch (pieces[move]){
+                case whitePawn -> whitePawnPattern(move);
+                case blackPawn -> blackPawnPattern(move);
+                case whiteRook, blackRook -> rookPattern(move);
+                case whiteKnight, blackKnight -> knightPattern(move);
+                case whiteBishop, blackBishop -> bishopPattern(move);
+                case whiteQueen, blackQueen -> queenPattern(move);
+                case whiteKing, blackKing -> kingPattern(move);
+                default -> System.out.println("ERROR");
+            }
+            for (int i = 0; i < 64; i++){
+                if (allowedAttacks[i]){
+                    squareColors[i] = 1;
+                }
+                else if (allowedMoves[i]){ // It' a boolean
+                    squareColors[i] = 2;
+                }
+
+            }
+            isSelecting = false;
+        } else {
+            // Moving part
+
+
+
+
+
+
+
+            isSelecting = true;
+        }
+
     }
+
+    public static boolean isInWhite(int piece){
+        for (int i : whitePieces) {
+            if (i == piece){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isInBlack(int piece){
+        for (int i : blackPieces) {
+            if (i == piece){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void whitePawnPattern(int index){
+        int target = index + 8;
+        if (pieces[target] == emptySquare){
+            allowedMoves[target] = true;
+        } else if (isInBlack(pieces[target])) {
+            allowedAttacks[target] = true;
+        }
+        target = index + 16;
+        if (index < 16){
+            if (pieces[target] == emptySquare) {
+                allowedMoves[target] = true;
+            } else if (isInBlack(pieces[target])) {
+                allowedAttacks[target] = true;
+            }
+        }
+    }
+    public static void blackPawnPattern(int index){
+        if (pieces[index-8] == emptySquare){
+            allowedMoves[index-8] = true;
+        }
+        if (pieces[index-16] == emptySquare && index > 48) {
+            allowedMoves[index-16] = true;
+        }
+    }
+    public static void rookPattern(int index){
+
+    }
+    public static void knightPattern(int index){
+
+    }
+    public static void bishopPattern(int index){
+
+    }
+    public static void kingPattern(int index){
+
+    }
+    public static void queenPattern(int index){
+
+    }
+
 
     public static void gameLoop(){
         startPosition();
