@@ -269,22 +269,27 @@ public class Chess {
             //System.out.println("Atk: " + allowedAttacks[move]);
             if (allowedMoves[move] || allowedAttacks[move]){
                 Arrays.fill(allowedMoves, false);
+                Arrays.fill(allowedAttacks, false);
                 int savePos = 1;
                 pieces[move] = selectedPiece; // Put new pieces to new position
                 pieces[oldPosition] = emptySquare; //clear old square
                 if (!checkDetection(!whiteTurn)) { // Checks if you need to defend the check
                     // Commit to move
-                    //pieces[move] = selectedPiece; // Put new pieces to new position
-                    //pieces[oldPosition] = emptySquare; //clear old square
                     checkDetection(whiteTurn); // Checks if the enemy is checked
                     kingHasRedSquare();
                     printBoard();
                     Arrays.fill(allowedMoves, false);
-                    whiteTurn = !whiteTurn;
+                    Arrays.fill(allowedAttacks, false);
+                    whiteTurn = !whiteTurn; // other players turn
                     // next player
                 } else {
                     pieces[oldPosition] = selectedPiece;
                     pieces[move] = emptySquare;
+                    if(whiteTurn){
+                        whiteCheck = false;
+                    } else if (!whiteTurn) {
+                        blackCheck = false;
+                    }
                     printBoard();
                     System.out.println("Move prohibited. Protect your king!");
                 }
