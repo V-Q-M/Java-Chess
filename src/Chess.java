@@ -270,7 +270,7 @@ public class Chess {
             if (allowedMoves[move] || allowedAttacks[move]){
                 Arrays.fill(allowedMoves, false);
                 Arrays.fill(allowedAttacks, false);
-                int savePos = 1;
+                int savePiece = pieces[move];
                 pieces[move] = selectedPiece; // Put new pieces to new position
                 pieces[oldPosition] = emptySquare; //clear old square
                 if (!checkDetection(!whiteTurn)) { // Checks if you need to defend the check
@@ -284,7 +284,7 @@ public class Chess {
                     // next player
                 } else {
                     pieces[oldPosition] = selectedPiece;
-                    pieces[move] = emptySquare;
+                    pieces[move] = savePiece;
                     if(whiteTurn){
                         whiteCheck = false;
                     } else if (!whiteTurn) {
@@ -302,7 +302,6 @@ public class Chess {
             Arrays.fill(allowedAttacks, false);
             isSelecting = true;
         }
-
     }
 
     public static void moveValidation(int move){
@@ -438,8 +437,66 @@ public class Chess {
 
 
     public static void rookPattern(int index, int color){
-
+        // up
+        for (int i = index + 8; i < 64; i += 8) {
+            if (i >= 64) {
+                break;
+            }
+            if (pieces[i] == emptySquare) {
+                allowedMoves[i] = true;
+            }
+            else if ((isInBlack(pieces[i]) && color == 0) || (isInWhite(pieces[i]) && color == 1)) {
+                allowedAttacks[i] = true;
+                break;
+            }
+            else if ((isInBlack(pieces[i]) && color == 1) || (isInWhite(pieces[i]) && color == 0)) {
+                break;
+            }
+        }
+        // down
+        for (int i = index - 8; i >= 0; i -= 8) {
+            if (i < 0) {
+                break;
+            }
+            if (pieces[i] == emptySquare) {
+                allowedMoves[i] = true;
+            }
+            else if ((isInBlack(pieces[i]) && color == 0) || (isInWhite(pieces[i]) && color == 1)) {
+                allowedAttacks[i] = true;
+                break;
+            }
+            else if ((isInBlack(pieces[i]) && color == 1) || (isInWhite(pieces[i]) && color == 0)) {
+                break;
+            }
+        }
+        // right
+        for (int i = index + 1; i % 8 != 0; i++) {
+            if (pieces[i] == emptySquare) {
+                allowedMoves[i] = true;
+            }
+            else if ((isInBlack(pieces[i]) && color == 0) || (isInWhite(pieces[i]) && color == 1)) {
+                allowedAttacks[i] = true;
+                break;
+            }
+            else if ((isInBlack(pieces[i]) && color == 1) || (isInWhite(pieces[i]) && color == 0)) {
+                break;
+            }
+        }
+        // left
+        for (int i = index - 1; i % 8 != 7 && i >= 0; i--) {
+            if (pieces[i] == emptySquare) {
+                allowedMoves[i] = true;
+            }
+            else if ((isInBlack(pieces[i]) && color == 0) || (isInWhite(pieces[i]) && color == 1)) {
+                allowedAttacks[i] = true;
+                break;
+            }
+            else if ((isInBlack(pieces[i]) && color == 1) || (isInWhite(pieces[i]) && color == 0)) {
+                break;
+            }
+        }
     }
+
     public static void knightPattern(int index, int color){
 
     }
@@ -466,9 +523,11 @@ public class Chess {
             }
         }
     }
-    public static void queenPattern(int index, int color){
+    public static void queenPattern(int index, int color) {
+        rookPattern(index, color);
 
     }
+
 
 
     public static void gameLoop(){
