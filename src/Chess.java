@@ -319,9 +319,11 @@ public class Chess {
                 }
             }
         }
-        System.out.println(Arrays.toString(allowedAttacks));
+        //System.out.println(Arrays.toString(allowedAttacks));
         return false;
     }
+
+
 
     public static boolean isInWhite(int piece){
         for (int i : whitePieces) {
@@ -341,10 +343,12 @@ public class Chess {
         return false;
     }
 
+
+
     public static void whitePawnPattern(int index){
         int target = index + 8;
         if (target < 64) {
-            System.out.println("target: " + target);
+            //System.out.println("target: " + target);
             if (pieces[target] == emptySquare){
                 allowedMoves[target] = true;
             } else if (isInBlack(pieces[target])) {
@@ -362,14 +366,31 @@ public class Chess {
             }
         }
     }
+
+
     public static void blackPawnPattern(int index){
-        if (pieces[index-8] == emptySquare){
-            allowedMoves[index-8] = true;
+        int target = index - 8;
+        if (target >= 0) {
+            //System.out.println("target: " + target);
+            if (pieces[target] == emptySquare){
+                allowedMoves[target] = true;
+            } else if (isInWhite(pieces[target])) {
+                allowedAttacks[target] = true;
+            }
         }
-        if (pieces[index-16] == emptySquare && index > 48) {
-            allowedMoves[index-16] = true;
+        target = index - 16;
+        if (target >= 0) {
+            if (index >= 48){
+                if (pieces[target] == emptySquare) {
+                    allowedMoves[target] = true;
+                } else if (isInWhite(pieces[target])) {
+                    allowedAttacks[target] = true;
+                }
+            }
         }
     }
+
+
     public static void rookPattern(int index){
 
     }
