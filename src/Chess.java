@@ -201,9 +201,8 @@ public class Chess {
         else if (moveString != null && moveString.length() == 2){
             int move = translateInput(moveString); // Convert input to an index
             if (move != -1){
-                System.out.println("Which means: " + move); // good logic
                 gameLogic(move);
-                printBoard();
+                System.out.println("Which means: " + move); // good logic
             } else {
                 System.out.println("Invalid move");
             }
@@ -212,10 +211,11 @@ public class Chess {
         }
     }
 
+    static int selectedPiece = -1;
+    static int oldPosition = -1;
     public static void gameLogic(int move){
         // squarecolor, white = 0, red = 1, blue = 2
         // selection part
-        Arrays.fill(allowedMoves, false);
         Arrays.fill(squareColors, 0);
         if (isSelecting){
             squareColors[move] = 3;
@@ -239,17 +239,24 @@ public class Chess {
                 }
 
             }
+            selectedPiece = pieces[move];
+            oldPosition = move;
             isSelecting = false;
+            printBoard();
         } else {
             // Moving part
+            //System.out.println("Mv: " + allowedMoves[move]);
+            //System.out.println("Atk: " + allowedAttacks[move]);
+            if (allowedMoves[move] || allowedAttacks[move]){
+                // Commit to move
+                System.out.println("Selected piece: " + selectedPiece);
 
-
-
-
-
-
-
+                pieces[move] = selectedPiece; // Put new pieces to new position
+                pieces[oldPosition] = emptySquare; //clear old square
+            }
+            Arrays.fill(allowedMoves, false);
             isSelecting = true;
+            printBoard();
         }
 
     }
@@ -274,6 +281,7 @@ public class Chess {
 
     public static void whitePawnPattern(int index){
         int target = index + 8;
+        System.out.println("target: " + target);
         if (pieces[target] == emptySquare){
             allowedMoves[target] = true;
         } else if (isInBlack(pieces[target])) {
