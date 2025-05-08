@@ -103,8 +103,9 @@ public class Chess {
         else if (moveString != null && moveString.length() == 2){
             int move = translateInput(moveString); // Convert input to an index
             if (move != -1){
-                gameLogic(move);
-                System.out.println("You entered: " + moveString);
+                if (isSelecting) pieceSelection(move);
+                else gameLogic(move);
+                //System.out.println("You entered: " + moveString);
             } else {
                 System.out.println("Invalid move");
             }
@@ -131,78 +132,77 @@ public class Chess {
         return moveConverted;
     }
 
+    public static void pieceSelection(int move){
+        // If player touches his pieces
+        if ((whiteTurn && Pieces.isInWhite(pieces[move])) || (!whiteTurn && Pieces.isInBlack(pieces[move]))){
+            squareColors[move] = 3; // Color the square yellow
+            moveValidation(move); // Get all valid moves
+
+            for (int i = 0; i < 64; i++){
+                if (allowedAttacks[i]){
+                    squareColors[i] = 1;  //Attacks get colored redd
+                }
+                else if (allowedMoves[i]){ // It's a boolean
+                    squareColors[i] = 2; // These ones are blue
+                }
+            }
+            selectedPiece = pieces[move]; // selects the inputted piece
+            oldPosition = move; // needed for validation
+            isSelecting = false;
+            Visuals.printBoard();
+        } else {
+            System.out.println("Not your piece...");
+        }
+    }
+
+
 
     // LOGIC
     public static void gameLogic(int move){
-        // squarecolor, white = 0, red = 1, blue = 2
-        // selection part
-        Arrays.fill(squareColors, 0);
+        // squarecolor, white = 0, red = 1, blue = 2, yellow = 3
+        Arrays.fill(squareColors, 0); // clears colours
         Visuals.kingHasRedSquare();
-        if (isSelecting){
-            if ((whiteTurn && Pieces.isInWhite(pieces[move])) || (!whiteTurn && Pieces.isInBlack(pieces[move]))){
-                squareColors[move] = 3;
-                moveValidation(move);
 
-                for (int i = 0; i < 64; i++){
-                    if (allowedAttacks[i]){
-                        squareColors[i] = 1;
-                    }
-                    else if (allowedMoves[i]){ // It's a boolean
-                        squareColors[i] = 2;
-                    }
-
-                }
-                selectedPiece = pieces[move];
-                oldPosition = move;
-                isSelecting = false;
-                Visuals.printBoard();
-            } else {
-                System.out.println("Not your piece...");
-            }
-        } else {
-            // Moving part
-            if (allowedMoves[move] || allowedAttacks[move]){
-                Arrays.fill(allowedMoves, false);
-                Arrays.fill(allowedAttacks, false);
-                int savePiece = pieces[move];
-                pieces[move] = selectedPiece; // Put new pieces to new position
-                pieces[oldPosition] = emptySquare; //clear old square
-                if (!checkDetectionWithoutMarker(!whiteTurn)) { // Checks if you need to defend the check
-                    // Commit to move
-                    checkDetection(whiteTurn); // Checks if the enemy is checked
-                    // Pawn promotion
-                    if (selectedPiece == whitePawn && move > 56){
-                        pieces[move] = whiteQueen;
-                    } else if (selectedPiece == blackPawn && move < 8){
-                        pieces[move] = blackQueen;
-                    }
-                    Arrays.fill(squareColors, 0);
-                    Visuals.kingHasRedSquare();
-                    Visuals.printBoard();
-                    Arrays.fill(allowedMoves, false);
-                    Arrays.fill(allowedAttacks, false);
-                    whiteTurn = !whiteTurn; // other players turn
-                    // next player
-                } else {
-                    pieces[oldPosition] = selectedPiece;
-                    pieces[move] = savePiece;
-                    if(whiteTurn){
-                        whiteCheck = false;
-                    } else if (!whiteTurn) {
-                        blackCheck = false;
-                    }
-                    Visuals.printBoard();
-                    System.out.println("Move prohibited. Protect your king!");
-                }
-
-            } else {
-                Visuals.printBoard();
-                System.out.println("Invalid move");
-            }
+        // Moving part
+        if (allowedMoves[move] || allowedAttacks[move]){
             Arrays.fill(allowedMoves, false);
             Arrays.fill(allowedAttacks, false);
-            isSelecting = true;
+            int savePiece = pieces[move];
+            pieces[move] = selectedPiece; // Put new pieces to new position
+            pieces[oldPosition] = emptySquare; //clear old square
+            if (!checkDetectionWithoutMarker(!whiteTurn)) { // Checks if you need to defend the check
+                // Commit to move
+                checkDetection(whiteTurn); // Checks if the enemy is checked
+                // Pawn promotion
+                if (selectedPiece == whitePawn && move >= 56){
+                    pieces[move] = whiteQueen;
+                } else if (selectedPiece == blackPawn && move < 8){
+                    pieces[move] = blackQueen;
+                }
+                Arrays.fill(squareColors, 0);
+                Visuals.kingHasRedSquare();
+                Visuals.printBoard();
+                Arrays.fill(allowedMoves, false);
+                Arrays.fill(allowedAttacks, false);
+                whiteTurn = !whiteTurn; // other players turn
+                // next player
+            } else {
+                Pieces.undoMove(move, oldPosition, savePiece, selectedPiece);
+                if (whiteTurn) whiteCheck = false;
+                else blackCheck = false;
+
+                Visuals.printBoard();
+                System.out.println("Move prohibited. Protect your king!");
+            }
+
+        } else {
+            Visuals.printBoard();
+            System.out.println("Invalid move");
         }
+        Arrays.fill(allowedMoves, false);
+        Arrays.fill(allowedAttacks, false);
+        isSelecting = true;
+
     }
 
     // MOVEMENT
@@ -296,14 +296,17 @@ public class Chess {
     }
 
 
-
     // MAIN LOOP
     public static void gameLoop(){
         startPosition();
         Visuals.printBoard();
         while(running){
             //System.out.println(Arrays.toString(pieces));
-            System.out.println("White turn: " + whiteTurn);
+            if (whiteTurn) {
+                System.out.println("White turn" );
+            } else {
+                System.out.println("Black turn" );
+            }
             getInput();
 
         }

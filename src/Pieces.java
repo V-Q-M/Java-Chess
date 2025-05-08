@@ -37,6 +37,11 @@ public class Pieces {
         }
     }
 
+    public static void undoMove(int move, int oldPosition, int capturedPiece, int selectedPiece){
+        Chess.pieces[oldPosition] = selectedPiece;
+        Chess.pieces[move] = capturedPiece;
+    }
+
     public static void whitePawnPattern(int index){
         int target = index + 8;
         if (target < 64) {
