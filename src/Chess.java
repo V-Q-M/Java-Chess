@@ -437,46 +437,60 @@ public class Chess {
     public static void whitePawnPattern(int index){
         int target = index + 8;
         if (target < 64) {
-            //System.out.println("target: " + target);
             if (pieces[target] == emptySquare){
                 allowedMoves[target] = true;
-            } else if (isInBlack(pieces[target])) {
-                allowedAttacks[target] = true;
             }
         }
         target = index + 16;
-        if (target < 64) {
-            if (index < 16){
-                if (pieces[target] == emptySquare) {
-                    allowedMoves[target] = true;
-                } else if (isInBlack(pieces[target])) {
-                    allowedAttacks[target] = true;
-                }
+        if ((target < 64) && index < 16) {
+            if (pieces[target] == emptySquare) {
+                allowedMoves[target] = true;
             }
         }
+
+        target = index + 9;
+        if ((target < 64) && ((target % 8) != 0)) {
+            if (isInBlack(pieces[target])) {
+                allowedAttacks[target] = true;
+            }
+        }
+        target = index + 7;
+        if ((target < 64) && ((target % 8) != 7)) {
+            if (isInBlack(pieces[target])) {
+                allowedAttacks[target] = true;
+            }
+        }
+
     }
 
 
     public static void blackPawnPattern(int index){
         int target = index - 8;
         if (target >= 0) {
-            //System.out.println("target: " + target);
-            if (pieces[target] == emptySquare){
+            if (pieces[target] == emptySquare) {
                 allowedMoves[target] = true;
-            } else if (isInWhite(pieces[target])) {
+            }
+
+        }
+        target = index - 16;
+        if ((target >= 0) && (index >= 48)) {
+            if (pieces[target] == emptySquare) {
+                allowedMoves[target] = true;
+            }
+        }
+        target = index - 9;
+        if ((target >= 0) && ((target % 8) != 7)) {
+            if (isInWhite(pieces[target])) {
                 allowedAttacks[target] = true;
             }
         }
-        target = index - 16;
-        if (target >= 0) {
-            if (index >= 48){
-                if (pieces[target] == emptySquare) {
-                    allowedMoves[target] = true;
-                } else if (isInWhite(pieces[target])) {
-                    allowedAttacks[target] = true;
-                }
+        target = index - 7;
+        if ((target >= 0) && ((target % 8) != 0)) {
+            if (isInWhite(pieces[target])) {
+                allowedAttacks[target] = true;
             }
         }
+
     }
 
 
