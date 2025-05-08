@@ -276,6 +276,12 @@ public class Chess {
                 if (!checkDetectionWithoutMarker(!whiteTurn)) { // Checks if you need to defend the check
                     // Commit to move
                     checkDetection(whiteTurn); // Checks if the enemy is checked
+                    // Pawn promotion
+                    if (selectedPiece == whitePawn && move > 56){
+                        pieces[move] = whiteQueen;
+                    } else if (selectedPiece == blackPawn && move < 8){
+                        pieces[move] = blackQueen;
+                    }
                     Arrays.fill(squareColors, 0);
                     kingHasRedSquare();
                     printBoard();
@@ -431,7 +437,6 @@ public class Chess {
         }
         return false;
     }
-
 
 
     public static void whitePawnPattern(int index){
