@@ -1,6 +1,26 @@
 public class Visuals {
 
 
+    public static void kingHasRedSquare(){
+        if (Chess.blackCheck){
+            for (int i = 0; i < 63; i++) {
+                if (Chess.pieces[i] == Chess.blackKing){
+                    Chess.squareColors[i] = 1;
+                    break;
+                }
+            }
+        }
+        if (Chess.whiteCheck){
+            for (int i = 0; i < 63; i++) {
+                if (Chess.pieces[i] == Chess.whiteKing){
+                    Chess.squareColors[i] = 1;
+                    break;
+                }
+            }
+        }
+    }
+
+
     public static String pieceVisuals(int pieceId){
         final String RESET = "\u001B[0m";
         final String WHITE = "\u001B[97m";
@@ -51,7 +71,7 @@ public class Visuals {
         final String WHITE_BACKGROUND = "\u001B[47m";  // White background for light squares
         final String BLACK_BACKGROUND = "\u001B[100m";  // Black background for dark squares
         StringBuilder board = new StringBuilder();  // Use StringBuilder for better performance
-
+        System.out.flush();
         // Header with column labels ┌───┐
         board.append("   ┌───┬───┬───┬───┬───┬───┬───┬───┐\n");
 

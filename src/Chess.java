@@ -3,10 +3,11 @@ import java.util.Objects;
 import java.util.Scanner;
 
 public class Chess {
-
+    // STATE
     static boolean running = true;
     static boolean isSelecting = true;
-    //static int player = 0;
+
+    // PLAYER
     static boolean whiteTurn = true;
     static boolean blackCheck = false;
     static boolean whiteCheck = false;
@@ -31,17 +32,22 @@ public class Chess {
     final static int[] whitePieces = {whitePawn, whiteRook, whiteKnight, whiteBishop, whiteQueen, whiteKing};
     final static int[] blackPieces = {blackPawn, blackRook, blackKnight, blackBishop, blackQueen, blackKing};
 
-    // SETTINGS
-    public static int visualStyle = 1; //0 = Double letter pieces. 1 = Unicode pieces.
+    // Needed for move checking
+    static int selectedPiece = -1;
+    static int oldPosition = -1;
 
+    // PIECES
+    static int[] pieces = new int[64]; // stores the positions of the pieces
+    static int[] squareColors = new int[64]; // stores the color each square should have
+    static boolean[] allowedMoves = new boolean[64]; // stores the allowed moves of one piece
+    static boolean[] allowedAttacks = new boolean[64]; //Same thing but for attacks
     static Scanner scan = new Scanner(System.in);
 
-    static int[] pieces = new int[64]; // stores the positions of the pieces
-    static int[] squareColors = new int[64];
-    static boolean[] allowedMoves = new boolean[64]; // stores the allowed moves of one piece
-    static boolean[] allowedAttacks = new boolean[64];
+    // SETTINGS
+    public static int visualStyle = 1; //0 = Double letter pieces. 1 = Unicode pieces.
+    public static boolean singlePlayer = true;
 
-
+    // SETUP
     public static void startPosition(){
         // White pieces
         pieces[0]  = whiteRook;
@@ -80,26 +86,24 @@ public class Chess {
         pieces[48] = blackPawn;
     }
 
+    // INPUT
+    public static void getInput(){
+        System.out.print("Enter your target: ");
+        String moveString = scan.next(); // Get input
 
-
-
-
-    public static void kingHasRedSquare(){
-        if (blackCheck){
-            for (int i = 0; i < 63; i++) {
-                if (pieces[i] == blackKing){
-                    squareColors[i] = 1;
-                    break;
-                }
-            }
+        if (Objects.equals(moveString, "exit")){
+            running = false;
         }
-        if (whiteCheck){
-            for (int i = 0; i < 63; i++) {
-                if (pieces[i] == whiteKing){
-                    squareColors[i] = 1;
-                    break;
-                }
+        else if (moveString != null && moveString.length() == 2){
+            int move = translateInput(moveString); // Convert input to an index
+            if (move != -1){
+                gameLogic(move);
+                System.out.println("You entered: " + moveString);
+            } else {
+                System.out.println("Invalid move");
             }
+        } else {
+            System.out.println("Invalid input");
         }
     }
 
@@ -123,36 +127,15 @@ public class Chess {
         return moveConverted;
     }
 
-    public static void getInput(){
-        System.out.print("Enter your target: ");
-        String moveString = scan.next(); // Get input
 
-        if (Objects.equals(moveString, "exit")){
-            running = false;
-        }
-        else if (moveString != null && moveString.length() == 2){
-            int move = translateInput(moveString); // Convert input to an index
-            if (move != -1){
-                gameLogic(move);
-                System.out.println("You entered: " + moveString);
-                System.out.println("Which means: " + move); // good logic
-            } else {
-                System.out.println("Invalid move");
-            }
-        } else {
-            System.out.println("Invalid input");
-        }
-    }
-
-    static int selectedPiece = -1;
-    static int oldPosition = -1;
+    // LOGIC
     public static void gameLogic(int move){
         // squarecolor, white = 0, red = 1, blue = 2
         // selection part
         Arrays.fill(squareColors, 0);
-        kingHasRedSquare();
+        Visuals.kingHasRedSquare();
         if (isSelecting){
-            if ((whiteTurn && isInWhite(pieces[move])) || (!whiteTurn && isInBlack(pieces[move]))){
+            if ((whiteTurn && Pieces.isInWhite(pieces[move])) || (!whiteTurn && Pieces.isInBlack(pieces[move]))){
                 squareColors[move] = 3;
                 moveValidation(move);
 
@@ -174,8 +157,6 @@ public class Chess {
             }
         } else {
             // Moving part
-            //System.out.println("Mv: " + allowedMoves[move]);
-            //System.out.println("Atk: " + allowedAttacks[move]);
             if (allowedMoves[move] || allowedAttacks[move]){
                 Arrays.fill(allowedMoves, false);
                 Arrays.fill(allowedAttacks, false);
@@ -192,7 +173,7 @@ public class Chess {
                         pieces[move] = blackQueen;
                     }
                     Arrays.fill(squareColors, 0);
-                    kingHasRedSquare();
+                    Visuals.kingHasRedSquare();
                     Visuals.printBoard();
                     Arrays.fill(allowedMoves, false);
                     Arrays.fill(allowedAttacks, false);
@@ -220,38 +201,41 @@ public class Chess {
         }
     }
 
+    // MOVEMENT
+
     public static void moveValidation(int move){
         switch (pieces[move]){
-            case whitePawn   -> whitePawnPattern(move);
-            case whiteRook   -> rookPattern(move, 0);
-            case whiteKnight -> knightPattern(move, 0);
-            case whiteBishop -> bishopPattern(move, 0);
-            case whiteQueen  -> queenPattern(move, 0);
-            case whiteKing   -> kingPattern(move, 0);
-            case blackPawn   -> blackPawnPattern(move);
-            case blackRook   -> rookPattern(move, 1);
-            case blackKnight -> knightPattern(move, 1);
-            case blackBishop -> bishopPattern(move, 1);
-            case blackQueen  -> queenPattern(move, 1);
-            case blackKing   -> kingPattern(move, 1);
+            case whitePawn   -> Pieces.whitePawnPattern(move);
+            case whiteRook   -> Pieces.rookPattern(move, 0);
+            case whiteKnight -> Pieces.knightPattern(move, 0);
+            case whiteBishop -> Pieces.bishopPattern(move, 0);
+            case whiteQueen  -> Pieces.queenPattern(move, 0);
+            case whiteKing   -> Pieces.kingPattern(move, 0);
+            case blackPawn   -> Pieces.blackPawnPattern(move);
+            case blackRook   -> Pieces.rookPattern(move, 1);
+            case blackKnight -> Pieces.knightPattern(move, 1);
+            case blackBishop -> Pieces.bishopPattern(move, 1);
+            case blackQueen  -> Pieces.queenPattern(move, 1);
+            case blackKing   -> Pieces.kingPattern(move, 1);
             default -> System.out.println("ERROR");
         }
     }
 
-    public static boolean checkDetection(boolean checkWhite){
+    public static boolean checkDetection(boolean checkWhite) {
         // For white side
-        if (checkWhite){
-            int kingPosition = -1;
-            for (int i = 0; i < 64; i++){
-                if (pieces[i] == blackKing){
+        int kingPosition;
+        if (checkWhite) {
+            kingPosition = -1;
+            for (int i = 0; i < 64; i++) {
+                if (pieces[i] == blackKing) {
                     kingPosition = i;
                 }
-                if (isInWhite(pieces[i])){
+                if (Pieces.isInWhite(pieces[i])) {
                     moveValidation(i);
                 }
             }
             for (int i = 0; i < 64; i++) {
-                if (allowedAttacks[kingPosition]){
+                if (allowedAttacks[kingPosition]) {
                     System.out.println("Black King is check!");
                     blackCheck = true;
                     return true;
@@ -260,22 +244,21 @@ public class Chess {
                 }
             }
         } else if (checkWhite == false) {
-            int kingPosition = -1;
-            for (int i = 0; i < 64; i++){
-                if (pieces[i] == whiteKing){
+            kingPosition = -1;
+            for (int i = 0; i < 64; i++) {
+                if (pieces[i] == whiteKing) {
                     kingPosition = i;
                 }
-                if (isInBlack(pieces[i])){
+                if (Pieces.isInBlack(pieces[i])) {
                     moveValidation(i);
                 }
             }
             for (int i = 0; i < 64; i++) {
-                if (allowedAttacks[kingPosition]){
+                if (allowedAttacks[kingPosition]) {
                     System.out.println("White King is check!");
                     whiteCheck = true;
                     return true;
-                }
-                else {
+                } else {
                     whiteCheck = false;
                 }
             }
@@ -292,7 +275,7 @@ public class Chess {
                 if (pieces[i] == blackKing){
                     kingPosition = i;
                 }
-                if (isInWhite(pieces[i])){
+                if (Pieces.isInWhite(pieces[i])){
                     moveValidation(i);
                 }
             }
@@ -310,7 +293,7 @@ public class Chess {
                 if (pieces[i] == whiteKing){
                     kingPosition = i;
                 }
-                if (isInBlack(pieces[i])){
+                if (Pieces.isInBlack(pieces[i])){
                     moveValidation(i);
                 }
             }
@@ -329,356 +312,9 @@ public class Chess {
     }
 
 
-    public static boolean isInWhite(int piece){
-        for (int i : whitePieces) {
-            if (i == piece){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean isInBlack(int piece){
-        for (int i : blackPieces) {
-            if (i == piece){
-                return true;
-            }
-        }
-        return false;
-    }
 
 
-    public static void whitePawnPattern(int index){
-        int target = index + 8;
-        if (target < 64) {
-            if (pieces[target] == emptySquare){
-                allowedMoves[target] = true;
-            }
-        }
-        target = index + 16;
-        if ((target < 64) && index < 16) {
-            if (pieces[target] == emptySquare) {
-                allowedMoves[target] = true;
-            }
-        }
-
-        target = index + 9;
-        if ((target < 64) && ((target % 8) != 0)) {
-            if (isInBlack(pieces[target])) {
-                allowedAttacks[target] = true;
-            }
-        }
-        target = index + 7;
-        if ((target < 64) && ((target % 8) != 7)) {
-            if (isInBlack(pieces[target])) {
-                allowedAttacks[target] = true;
-            }
-        }
-
-    }
-
-
-    public static void blackPawnPattern(int index){
-        int target = index - 8;
-        if (target >= 0) {
-            if (pieces[target] == emptySquare) {
-                allowedMoves[target] = true;
-            }
-
-        }
-        target = index - 16;
-        if ((target >= 0) && (index >= 48)) {
-            if (pieces[target] == emptySquare) {
-                allowedMoves[target] = true;
-            }
-        }
-        target = index - 9;
-        if ((target >= 0) && ((target % 8) != 7)) {
-            if (isInWhite(pieces[target])) {
-                allowedAttacks[target] = true;
-            }
-        }
-        target = index - 7;
-        if ((target >= 0) && ((target % 8) != 0)) {
-            if (isInWhite(pieces[target])) {
-                allowedAttacks[target] = true;
-            }
-        }
-
-    }
-
-
-    public static void rookPattern(int index, int color){
-        // up
-        for (int i = index + 8; i < 64; i += 8) {
-            if (i >= 64) {
-                break;
-            }
-            if (pieces[i] == emptySquare) {
-                allowedMoves[i] = true;
-            }
-            else if ((isInBlack(pieces[i]) && color == 0) || (isInWhite(pieces[i]) && color == 1)) {
-                allowedAttacks[i] = true;
-                break;
-            }
-            else if ((isInBlack(pieces[i]) && color == 1) || (isInWhite(pieces[i]) && color == 0)) {
-                break;
-            }
-        }
-        // down
-        for (int i = index - 8; i >= 0; i -= 8) {
-            if (i < 0) {
-                break;
-            }
-            if (pieces[i] == emptySquare) {
-                allowedMoves[i] = true;
-            }
-            else if ((isInBlack(pieces[i]) && color == 0) || (isInWhite(pieces[i]) && color == 1)) {
-                allowedAttacks[i] = true;
-                break;
-            }
-            else if ((isInBlack(pieces[i]) && color == 1) || (isInWhite(pieces[i]) && color == 0)) {
-                break;
-            }
-        }
-        // right
-        for (int i = index + 1; i % 8 != 0; i++) {
-            if (pieces[i] == emptySquare) {
-                allowedMoves[i] = true;
-            }
-            else if ((isInBlack(pieces[i]) && color == 0) || (isInWhite(pieces[i]) && color == 1)) {
-                allowedAttacks[i] = true;
-                break;
-            }
-            else if ((isInBlack(pieces[i]) && color == 1) || (isInWhite(pieces[i]) && color == 0)) {
-                break;
-            }
-        }
-        // left
-        for (int i = index - 1; i % 8 != 7 && i >= 0; i--) {
-            if (pieces[i] == emptySquare) {
-                allowedMoves[i] = true;
-            }
-            else if ((isInBlack(pieces[i]) && color == 0) || (isInWhite(pieces[i]) && color == 1)) {
-                allowedAttacks[i] = true;
-                break;
-            }
-            else if ((isInBlack(pieces[i]) && color == 1) || (isInWhite(pieces[i]) && color == 0)) {
-                break;
-            }
-        }
-    }
-
-    public static void knightPattern(int index, int color){
-        int target = index + 16 + 1; // up right
-        if (target < 64) {
-            if (pieces[target] == emptySquare){
-                allowedMoves[target] = true;
-            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
-                allowedAttacks[target] = true;
-            }
-        }
-        target = index + 16 - 1;
-        if (target < 64) {
-            if (pieces[target] == emptySquare){
-                allowedMoves[target] = true;
-            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
-                allowedAttacks[target] = true;
-            }
-        }
-        target = index - 16 + 1;
-        if (target >= 0) {
-            if (pieces[target] == emptySquare){
-                allowedMoves[target] = true;
-            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
-                allowedAttacks[target] = true;
-            }
-        }
-        target = index - 16 - 1;
-        if (target >= 0) {
-            if (pieces[target] == emptySquare){
-                allowedMoves[target] = true;
-            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
-                allowedAttacks[target] = true;
-            }
-        }
-        target = index + 8 + 2;
-        if (target < 64) {
-            if (pieces[target] == emptySquare){
-                allowedMoves[target] = true;
-            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
-                allowedAttacks[target] = true;
-            }
-        }
-        target = index + 8 - 2;
-        if (target < 64) {
-            if (pieces[target] == emptySquare){
-                allowedMoves[target] = true;
-            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
-                allowedAttacks[target] = true;
-            }
-        }
-        target = index - 8 + 2;
-        if (target >= 0) {
-            if (pieces[target] == emptySquare){
-                allowedMoves[target] = true;
-            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
-                allowedAttacks[target] = true;
-            }
-        }
-        target = index - 8 - 2;
-        if (target >= 0) {
-            if (pieces[target] == emptySquare){
-                allowedMoves[target] = true;
-            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
-                allowedAttacks[target] = true;
-            }
-        }
-    }
-    public static void bishopPattern(int index, int color){
-        // up
-        for (int i = index + 9; i < 64; i += 9) {
-            if (i >= 64 || i % 8 == 0) {
-                break;
-            }
-            if (pieces[i] == emptySquare) {
-                allowedMoves[i] = true;
-            }
-            else if ((isInBlack(pieces[i]) && color == 0) || (isInWhite(pieces[i]) && color == 1)) {
-                allowedAttacks[i] = true;
-                break;
-            }
-            else if ((isInBlack(pieces[i]) && color == 1) || (isInWhite(pieces[i]) && color == 0)) {
-                break;
-            }
-        }
-        // down
-        for (int i = index - 9; i >= 0; i -= 9) {
-            if (i < 0 || i % 8 == 7) {
-                break;
-            }
-            if (pieces[i] == emptySquare) {
-                allowedMoves[i] = true;
-            }
-            else if ((isInBlack(pieces[i]) && color == 0) || (isInWhite(pieces[i]) && color == 1)) {
-                allowedAttacks[i] = true;
-                break;
-            }
-            else if ((isInBlack(pieces[i]) && color == 1) || (isInWhite(pieces[i]) && color == 0)) {
-                break;
-            }
-        }
-        // up
-        for (int i = index + 7; i < 64; i += 7) {
-            if (i >= 64 || i % 8 == 7) {
-                break;
-            }
-            if (pieces[i] == emptySquare) {
-                allowedMoves[i] = true;
-            }
-            else if ((isInBlack(pieces[i]) && color == 0) || (isInWhite(pieces[i]) && color == 1)) {
-                allowedAttacks[i] = true;
-                break;
-            }
-            else if ((isInBlack(pieces[i]) && color == 1) || (isInWhite(pieces[i]) && color == 0)) {
-                break;
-            }
-        }
-        // down
-        for (int i = index - 7; i >= 0; i -= 7) {
-            if (i < 0 || i % 8 == 0) {
-                break;
-            }
-            if (pieces[i] == emptySquare) {
-                allowedMoves[i] = true;
-            }
-            else if ((isInBlack(pieces[i]) && color == 0) || (isInWhite(pieces[i]) && color == 1)) {
-                allowedAttacks[i] = true;
-                break;
-            }
-            else if ((isInBlack(pieces[i]) && color == 1) || (isInWhite(pieces[i]) && color == 0)) {
-                break;
-            }
-        }
-    }
-
-
-    public static void kingPattern(int index, int color){
-        int target = index + 8;
-        if (target < 64) {
-            //System.out.println("target: " + target);
-            if (pieces[target] == emptySquare){
-                allowedMoves[target] = true;
-            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
-                allowedAttacks[target] = true;
-            }
-        }
-        target = index - 8;
-        if (0 <= target) {
-            //System.out.println("target: " + target);
-            if (pieces[target] == emptySquare){
-                allowedMoves[target] = true;
-            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
-                allowedAttacks[target] = true;
-            }
-        }
-        target = index + 1;
-        if (target  < 64){
-            if (pieces[target] == emptySquare){
-                allowedMoves[target] = true;
-            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
-                allowedAttacks[target] = true;
-            }
-        }
-        target = index - 1;
-        if (0 <= target) {
-            if (pieces[target] == emptySquare){
-                allowedMoves[target] = true;
-            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
-                allowedAttacks[target] = true;
-            }
-        }
-        target = index + 9;
-        if (target  < 64 && target % 8 != 0){
-            if (pieces[target] == emptySquare){
-                allowedMoves[target] = true;
-            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
-                allowedAttacks[target] = true;
-            }
-        }
-        target = index + 7;
-        if (target  < 64 && target % 8 != 7){
-            if (pieces[target] == emptySquare){
-                allowedMoves[target] = true;
-            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
-                allowedAttacks[target] = true;
-            }
-        }
-        target = index - 9;
-        if (target >= 0 && target % 8 != 7) {
-            if (pieces[target] == emptySquare){
-                allowedMoves[target] = true;
-            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
-                allowedAttacks[target] = true;
-            }
-        }
-        target = index - 7;
-        if (target >= 0 && target % 8 != 0) {
-            if (pieces[target] == emptySquare){
-                allowedMoves[target] = true;
-            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
-                allowedAttacks[target] = true;
-            }
-        }
-
-    }
-    public static void queenPattern(int index, int color) {
-        rookPattern(index, color);
-        bishopPattern(index, color);
-    }
-
-
-
+    // MAIN LOOP
     public static void gameLoop(){
         startPosition();
         Visuals.printBoard();
@@ -694,10 +330,10 @@ public class Chess {
 
 
     public static void main(String[] args) {
+        System.out.println("Welcome to Chess!");
         gameLoop();
 
         System.out.println("You exited the game.");
 
-        //System.out.println("Welcome to Chess Game!");
     }
 }
