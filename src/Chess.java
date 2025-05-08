@@ -556,7 +556,70 @@ public class Chess {
     }
 
     public static void knightPattern(int index, int color){
-
+        int target = index + 16 + 1; // up right
+        if (target < 64) {
+            if (pieces[target] == emptySquare){
+                allowedMoves[target] = true;
+            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
+                allowedAttacks[target] = true;
+            }
+        }
+        target = index + 16 - 1;
+        if (target < 64) {
+            if (pieces[target] == emptySquare){
+                allowedMoves[target] = true;
+            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
+                allowedAttacks[target] = true;
+            }
+        }
+        target = index - 16 + 1;
+        if (target >= 0) {
+            if (pieces[target] == emptySquare){
+                allowedMoves[target] = true;
+            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
+                allowedAttacks[target] = true;
+            }
+        }
+        target = index - 16 - 1;
+        if (target >= 0) {
+            if (pieces[target] == emptySquare){
+                allowedMoves[target] = true;
+            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
+                allowedAttacks[target] = true;
+            }
+        }
+        target = index + 8 + 2;
+        if (target < 64) {
+            if (pieces[target] == emptySquare){
+                allowedMoves[target] = true;
+            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
+                allowedAttacks[target] = true;
+            }
+        }
+        target = index + 8 - 2;
+        if (target < 64) {
+            if (pieces[target] == emptySquare){
+                allowedMoves[target] = true;
+            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
+                allowedAttacks[target] = true;
+            }
+        }
+        target = index - 8 + 2;
+        if (target >= 0) {
+            if (pieces[target] == emptySquare){
+                allowedMoves[target] = true;
+            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
+                allowedAttacks[target] = true;
+            }
+        }
+        target = index - 8 - 2;
+        if (target >= 0) {
+            if (pieces[target] == emptySquare){
+                allowedMoves[target] = true;
+            } else if ((isInBlack(pieces[target]) && color == 0) || (isInWhite(pieces[target]) && color == 1)) {
+                allowedAttacks[target] = true;
+            }
+        }
     }
     public static void bishopPattern(int index, int color){
         // up
