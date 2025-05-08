@@ -104,7 +104,7 @@ public class Chess {
             int move = translateInput(moveString); // Convert input to an index
             if (move != -1){
                 if (isSelecting) pieceSelection(move);
-                else gameLogic(move);
+                else gameLogic(move, selectedPiece);
                 //System.out.println("You entered: " + moveString);
             } else {
                 System.out.println("Invalid move");
@@ -158,7 +158,7 @@ public class Chess {
 
 
     // LOGIC
-    public static void gameLogic(int move){
+    public static void gameLogic(int move, int selectedPiece){
         // squarecolor, white = 0, red = 1, blue = 2, yellow = 3
         Arrays.fill(squareColors, 0); // clears colours
         Visuals.kingHasRedSquare();
@@ -201,7 +201,7 @@ public class Chess {
         }
         Arrays.fill(allowedMoves, false);
         Arrays.fill(allowedAttacks, false);
-        isSelecting = true;
+        isSelecting = true; // Change to selection mode
 
     }
 
