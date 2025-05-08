@@ -147,7 +147,7 @@ public class Chess {
                     if (allowedAttacks[i]){
                         squareColors[i] = 1;
                     }
-                    else if (allowedMoves[i]){ // It' a boolean
+                    else if (allowedMoves[i]){ // It's a boolean
                         squareColors[i] = 2;
                     }
 
@@ -227,44 +227,36 @@ public class Chess {
 
     public static boolean checkDetection(boolean checkWhite) {
         // For white side
-        int kingPosition;
+        int kingPosition = -1;
+
         if (checkWhite) {
-            kingPosition = -1;
+            // Find black king and generate white moves
             for (int i = 0; i < 64; i++) {
-                if (pieces[i] == blackKing) {
-                    kingPosition = i;
-                }
-                if (Pieces.isInWhite(pieces[i])) {
-                    moveValidation(i);
-                }
+                if (pieces[i] == blackKing) kingPosition = i;
+                if (Pieces.isInWhite(pieces[i])) moveValidation(i);
             }
-            for (int i = 0; i < 64; i++) {
-                if (allowedAttacks[kingPosition]) {
-                    System.out.println("Black King is check!");
-                    blackCheck = true;
-                    return true;
-                } else {
-                    blackCheck = false;
-                }
+
+            if (allowedAttacks[kingPosition]) {
+                System.out.println("Black King is check!");
+                blackCheck = true;
+                return true;
+            } else {
+                blackCheck = false;
             }
-        } else if (checkWhite == false) {
-            kingPosition = -1;
+
+        } else {
+            // Find white king and generate black moves
             for (int i = 0; i < 64; i++) {
-                if (pieces[i] == whiteKing) {
-                    kingPosition = i;
-                }
-                if (Pieces.isInBlack(pieces[i])) {
-                    moveValidation(i);
-                }
+                if (pieces[i] == whiteKing) kingPosition = i;
+                if (Pieces.isInBlack(pieces[i])) moveValidation(i);
             }
-            for (int i = 0; i < 64; i++) {
-                if (allowedAttacks[kingPosition]) {
-                    System.out.println("White King is check!");
-                    whiteCheck = true;
-                    return true;
-                } else {
-                    whiteCheck = false;
-                }
+
+            if (allowedAttacks[kingPosition]) {
+                System.out.println("White King is check!");
+                whiteCheck = true;
+                return true;
+            } else {
+                whiteCheck = false;
             }
         }
         //System.out.println(Arrays.toString(allowedAttacks));
@@ -273,48 +265,35 @@ public class Chess {
 
     public static boolean checkDetectionWithoutMarker(boolean checkWhite){
         // For white side
+        int kingPosition = -1;
+
         if (checkWhite){
-            int kingPosition = -1;
             for (int i = 0; i < 64; i++){
-                if (pieces[i] == blackKing){
-                    kingPosition = i;
-                }
-                if (Pieces.isInWhite(pieces[i])){
-                    moveValidation(i);
-                }
+                if (pieces[i] == blackKing) kingPosition = i;
+                if (Pieces.isInWhite(pieces[i])) moveValidation(i);
             }
-            for (int i = 0; i < 64; i++) {
-                if (allowedAttacks[kingPosition]){
-                    System.out.println("Black King is check!");
-                    return true;
-                } else {
-                    blackCheck = false;
-                }
+            if (allowedAttacks[kingPosition]){
+                System.out.println("Black King is check!");
+                return true;
+            } else {
+                blackCheck = false;
             }
-        } else if (checkWhite == false) {
-            int kingPosition = -1;
+        } else  {
             for (int i = 0; i < 64; i++){
-                if (pieces[i] == whiteKing){
-                    kingPosition = i;
-                }
-                if (Pieces.isInBlack(pieces[i])){
-                    moveValidation(i);
-                }
+                if (pieces[i] == whiteKing) kingPosition = i;
+                if (Pieces.isInBlack(pieces[i])) moveValidation(i);
             }
-            for (int i = 0; i < 64; i++) {
-                if (allowedAttacks[kingPosition]){
-                    System.out.println("White King is check!");
-                    return true;
-                }
-                else {
-                    whiteCheck = false;
-                }
+            if (allowedAttacks[kingPosition]){
+                System.out.println("White King is check!");
+                return true;
+            }
+            else {
+                whiteCheck = false;
             }
         }
         //System.out.println(Arrays.toString(allowedAttacks));
         return false;
     }
-
 
 
 
