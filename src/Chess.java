@@ -1,3 +1,9 @@
+//--------------------------------------------------------------------------
+// This class holds the main method of the game
+// It contains the input logic
+// It contains move validation
+// It contains the check detection
+//--------------------------------------------------------------------------
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
@@ -107,14 +113,12 @@ public class Chess {
         }
     }
 
-    public static int translateInput(String input){ // Translation and sanitazion of input
+    public static int translateInput(String input){ // Translation and sanitization of input
         int moveConverted = -1;
         String moveString = input.toLowerCase();
 
         char letter = moveString.charAt(0);  // the letter part (a-h)
         char number    = moveString.charAt(1);  // the digit part (1-8)
-        //System.out.println(letter);
-        //System.out.println(number);
         // Translate
         int col = letter - 'a';  // 'a' to 'h' → 0 to 7
         int row = number - '1';  // '1' to '8' → 0 to 7
