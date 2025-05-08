@@ -80,99 +80,8 @@ public class Chess {
         pieces[48] = blackPawn;
     }
 
-    public static String pieceVisuals(int pieceId){
-        final String RESET = "\u001B[0m";
-        final String WHITE = "\u001B[97m";
-        final String BLACK = "\u001B[30m";
 
-        if (visualStyle == 1){
-            return switch(pieceId){
-                case whitePawn   -> WHITE + "♟";
-                case whiteRook   -> WHITE + "♜";
-                case whiteKnight -> WHITE + "♞";
-                case whiteBishop -> WHITE + "♝";
-                case whiteQueen  -> WHITE + "♛";
-                case whiteKing   -> WHITE + "♚";
 
-                case blackPawn   -> BLACK + "♟";
-                case blackRook   -> BLACK + "♜";
-                case blackKnight -> BLACK + "♞";
-                case blackBishop -> BLACK + "♝";
-                case blackQueen  -> BLACK + "♛";
-                case blackKing   -> BLACK + "♚";
-                default -> " ";
-            };
-        }
-        // Default returns double letters
-        return switch(pieceId){
-            case whitePawn   -> WHITE + "PA" + RESET;
-            case whiteRook   -> WHITE + "RK" + RESET;
-            case whiteKnight -> WHITE + "KN" + RESET;
-            case whiteBishop -> WHITE + "BP" + RESET;
-            case whiteQueen  -> WHITE + "QN" + RESET;
-            case whiteKing   -> WHITE + "KG" + RESET;
-            case blackPawn   -> BLACK + "PA" + RESET;
-            case blackRook   -> BLACK + "RK" + RESET;
-            case blackKnight -> BLACK + "KN" + RESET;
-            case blackBishop -> BLACK + "BP" + RESET;
-            case blackQueen  -> BLACK + "QN" + RESET;
-            case blackKing   -> BLACK + "KG" + RESET;
-            default -> "  ";
-            };
-    }
-
-    public static void printBoard() {
-        final String RED_BACKGROUND = "\u001B[41m";  // Red background
-        final String BLUE_BACKGROUND = "\u001B[44m";  // Blue background
-        final String YELLOW_BACKGROUND = "\u001B[43m";  // Yellow background
-        final String RESET = "\u001B[0m";  // Reset
-        final String WHITE_BACKGROUND = "\u001B[47m";  // White background for light squares
-        final String BLACK_BACKGROUND = "\u001B[100m";  // Black background for dark squares
-        StringBuilder board = new StringBuilder();  // Use StringBuilder for better performance
-
-        // Header with column labels ┌───┐
-        board.append("   ┌───┬───┬───┬───┬───┬───┬───┬───┐\n");
-
-        // Loop through the board from row 7 (top) to row 0 (bottom)
-        for (int row = 7; row >= 0; row--) {
-            board.append(" ").append(row + 1).append(" │");  // Print the rank number at the beginning
-
-            // Loop through columns from 0 to 7
-            for (int col = 0; col < 8; col++) {
-                int i = row * 8 + col;  // Calculate the correct index for the 1D array representation
-                int piece = pieces[i];
-                String representation = pieceVisuals(piece);  // Get the piece's visual representation
-
-                // Alternate background colors between light and dark squares
-                if (squareColors[i] == 1){
-                    representation = RED_BACKGROUND + " " + representation + " " + RESET;
-                } else if (squareColors[i] == 2){
-                    representation = BLUE_BACKGROUND + " " + representation + " " + RESET;
-                } else if (squareColors[i] == 3){
-                    representation = YELLOW_BACKGROUND + " " + representation + " " + RESET;
-                } else {
-                    if ((row + col) % 2 == 0) {
-                        representation = BLACK_BACKGROUND + " " + representation + " " + RESET;
-                    } else {
-                        representation = WHITE_BACKGROUND + " " + representation + " " + RESET;
-                    }
-                }
-                // Add the piece representation with borders
-                board.append(representation).append("│");
-            }
-
-            // Add row separator and move to the next line
-            if (row > 0) {
-                board.append("\n   ├───┼───┼───┼───┼───┼───┼───┼───┤\n");
-            } else {
-                board.append("\n   └───┴───┴───┴───┴───┴───┴───┴───┘\n");
-            }
-        }
-        board.append("     A   B   C   D   E   F   G   H \n");
-
-        // Print the final board
-        System.out.println(board.toString());
-    }
 
 
     public static void kingHasRedSquare(){
@@ -259,7 +168,7 @@ public class Chess {
                 selectedPiece = pieces[move];
                 oldPosition = move;
                 isSelecting = false;
-                printBoard();
+                Visuals.printBoard();
             } else {
                 System.out.println("Not your piece...");
             }
@@ -284,7 +193,7 @@ public class Chess {
                     }
                     Arrays.fill(squareColors, 0);
                     kingHasRedSquare();
-                    printBoard();
+                    Visuals.printBoard();
                     Arrays.fill(allowedMoves, false);
                     Arrays.fill(allowedAttacks, false);
                     whiteTurn = !whiteTurn; // other players turn
@@ -297,12 +206,12 @@ public class Chess {
                     } else if (!whiteTurn) {
                         blackCheck = false;
                     }
-                    printBoard();
+                    Visuals.printBoard();
                     System.out.println("Move prohibited. Protect your king!");
                 }
 
             } else {
-                printBoard();
+                Visuals.printBoard();
                 System.out.println("Invalid move");
             }
             Arrays.fill(allowedMoves, false);
@@ -772,7 +681,7 @@ public class Chess {
 
     public static void gameLoop(){
         startPosition();
-        printBoard();
+        Visuals.printBoard();
         while(running){
             //System.out.println(Arrays.toString(pieces));
             System.out.println("White turn: " + whiteTurn);
