@@ -308,40 +308,18 @@ public class Chess {
                System.out.println("Black turn" );
             }
            getInput();
-
         }
-
     }
 
 
-    public static void mainMenu(){
-        System.out.print("""
-\u001B[32m┌────────────────────────────────────────────────┐
-│  ___  __    __     ___  _  _  ____  ____  ____ │
-│ / __)(  )  (  )   / __)/ )( \\(  __)/ ___)/ ___)│
-│( (__ / (_/\\ )(   ( (__ ) __ ( ) _) \\___ \\\\___ \\│
-│ \\___)\\____/(__)   \\___)\\_)(_/(____)(____/(____/│
-└────────────────────────────────────────────────┘\u001B[0m
-""");
-        System.out.println("                 \u001B[32m1. Singleplayer\n                 2. Multiplayer\n                 3.    Quit\u001B[0m");
-        System.out.print("                \u001B[40mEnter your choice: \u001B[0m");
-        String prompt = scan.next();
-        switch (prompt){
-            case "1" -> singlePlayer = true;
-            case "2" -> singlePlayer = false;
-            case "3" -> System.exit(0);
-        }
-        System.out.println("Do you want CLI or GUI visuals?");
-        System.out.println("1. CLI\n2. GUI");
-        String visualMode = scan.next();
-        if (visualMode.equals("1")) cliStyle = true;
-        else if (visualMode.equals("2")) cliStyle = false;
-    }
 
     public static void main(String[] args) {
-        mainMenu();
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+        Visuals.mainMenu();
         if (!cliStyle) Visuals.initGuiBoard();
         gameLoop();
+        System.out.print("\033[H\033[2J");
         System.out.flush();
         System.out.println("You exited the game.");
 

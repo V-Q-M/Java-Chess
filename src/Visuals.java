@@ -8,7 +8,33 @@ public class Visuals {
     final static String RESET = "\u001B[0m";  // Reset
     final static String WHITE_BACKGROUND = "\u001B[47m";  // White background for light squares
     final static String BLACK_BACKGROUND = "\u001B[100m";  // Black background for dark squares
-     static StringBuilder board = new StringBuilder();  // Use StringBuilder for better performance
+    static StringBuilder board = new StringBuilder();  // Use StringBuilder for better performance
+
+    public static void mainMenu(){
+        System.out.print("""
+\u001B[32m┌────────────────────────────────────────────────┐
+│  ___  __    __     ___  _  _  ____  ____  ____ │
+│ / __)(  )  (  )   / __)/ )( \\(  __)/ ___)/ ___)│
+│( (__ / (_/\\ )(   ( (__ ) __ ( ) _) \\___ \\\\___ \\│
+│ \\___)\\____/(__)   \\___)\\_)(_/(____)(____/(____/│
+└────────────────────────────────────────────────┘\u001B[0m
+""");
+        System.out.println("                 \u001B[32m1. Singleplayer\n                 2. Multiplayer\n                 3.    Quit\u001B[0m");
+        System.out.print("                \u001B[40mEnter your choice: \u001B[0m");
+        String prompt = Chess.scan.next();
+        switch (prompt){
+            case "1" -> Chess.singlePlayer = true;
+            case "2" -> Chess.singlePlayer = false;
+            case "3" -> System.exit(0);
+        }
+        System.out.println("Do you want CLI or GUI visuals?");
+        System.out.println("1. CLI\n2. GUI");
+        String visualMode = Chess.scan.next();
+        if (visualMode.equals("1")) Chess.cliStyle = true;
+        else if (visualMode.equals("2")) Chess.cliStyle = false;
+    }
+
+
 
     public static void kingHasRedSquare(){
         if (Chess.blackCheck){
@@ -95,6 +121,7 @@ public class Visuals {
     }
 
     private static void cliStyleBoard(){
+        System.out.print("\033[H\033[2J");
         System.out.flush();
         // Header with column labels ┌───┐
         board.append("         ┌───┬───┬───┬───┬───┬───┬───┬───┐\n");
@@ -206,7 +233,6 @@ public class Visuals {
             }
         }
     }
-
 
 
 }
