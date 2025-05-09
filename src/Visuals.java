@@ -23,8 +23,8 @@ public class Visuals {
         System.out.print("                \u001B[40mEnter your choice:\u001B[0m ");
         String prompt = Chess.scan.next();
         switch (prompt){
-            case "1" -> Chess.singlePlayer = true;
-            case "2" -> Chess.singlePlayer = false;
+            case "1" -> Chess.multiPlayer = false;
+            case "2" -> Chess.multiPlayer = true;
             case "3" -> System.exit(0);
         }
         System.out.print("\033[H\033[2J");
@@ -249,7 +249,6 @@ public class Visuals {
                     int rank = actualRow + 1;
                     String coordinate = "" + file + rank;
 
-                    int finalIndex = index;
                     square.addActionListener(e -> {
                         if (Chess.isSelecting) {
                             Chess.pieceSelection(Chess.translateInput(coordinate)); // Do as if you had typed your coordinate

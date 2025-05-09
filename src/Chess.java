@@ -51,7 +51,7 @@ public class Chess {
 
     // SETTINGS
     public static int visualStyle = 1; //0 = Double letter pieces. 1 = Unicode pieces.
-    public static boolean singlePlayer = true;
+    public static boolean multiPlayer = true;
     public static boolean cliStyle = true;
 
     // SETUP
@@ -134,8 +134,9 @@ public class Chess {
 
         return moveConverted;
     }
-
-    public static void pieceSelection(int move){
+    // AI needs to enter their move here
+    // AI inputs 52 meaning e7
+    public static boolean pieceSelection(int move){
         // If player touches his pieces
         if ((whiteTurn && Pieces.isInWhite(pieces[move])) || (!whiteTurn && Pieces.isInBlack(pieces[move]))){
             squareColors[move] = 3; // Color the square yellow
@@ -151,18 +152,21 @@ public class Chess {
             }
             selectedPiece = pieces[move]; // selects the inputted piece
             oldPosition = move; // needed for validation
-            isSelecting = false;
+            isSelecting = false; // Selection is over
             System.out.print("\033[H\033[2J");
             System.out.flush();
             Visuals.printBoard();
+            return true;
         } else {
             System.out.println("Not your piece...");
         }
+
+        return false;
     }
 
 
     // LOGIC
-    public static void gameLogic(int move, int selectedPiece){
+    public static boolean gameLogic(int move, int selectedPiece){
         // squarecolor, white = 0, red = 1, blue = 2, yellow = 3
         Arrays.fill(squareColors, 0); // clears colours
         Visuals.kingHasRedSquare();
@@ -209,7 +213,7 @@ public class Chess {
         Arrays.fill(allowedMoves, false);
         Arrays.fill(allowedAttacks, false);
         isSelecting = true; // Change to selection mode
-
+        return true;
     }
 
 
@@ -314,7 +318,12 @@ public class Chess {
             } else {
                System.out.println("Black turn" );
             }
-           getInput();
+            if (multiPlayer || whiteTurn) {
+                getInput();
+                ChessBot.searchRange = 63;
+            } else {
+                ChessBot.aiFirstSteps();
+            }
         }
     }
 
