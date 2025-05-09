@@ -20,7 +20,7 @@ public class Visuals {
 └────────────────────────────────────────────────┘\u001B[0m
 """);
         System.out.println("                 \u001B[32m1. Singleplayer\n                 2. Multiplayer\n                 3.    Quit\u001B[0m");
-        System.out.print("                \u001B[40mEnter your choice: \u001B[0m");
+        System.out.print("                \u001B[40mEnter your choice:\u001B[0m ");
         String prompt = Chess.scan.next();
         switch (prompt){
             case "1" -> Chess.singlePlayer = true;
