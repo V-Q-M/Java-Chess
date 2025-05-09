@@ -126,6 +126,7 @@ public class Visuals {
     private static void cliStyleBoard(){
         System.out.print("\033[H\033[2J");
         System.out.flush();
+        board.setLength(0);
         // Header with column labels ┌───┐
         board.append("         ┌───┬───┬───┬───┬───┬───┬───┬───┐\n");
 
