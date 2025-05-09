@@ -32,7 +32,7 @@ public class ChessBot {
 
 
     public static void aiFirstSteps(){
-        System.out.println("Hi, I am ChessBot.");
+       // System.out.println("Hi, I am ChessBot.");
         if (Chess.isSelecting) {
             aiMoveSelection();
         } else {
@@ -44,7 +44,7 @@ public class ChessBot {
         int maximum = 0;
         int indexOfMax;
         int[] result = new int[]{-1,- 1};
-        System.out.println(Arrays.toString(Chess.allowedAttacks));
+     //   System.out.println(Arrays.toString(Chess.allowedAttacks));
         for (int i = 0; i < 64; i++) {
             if (Chess.allowedAttacks[i] > maximum){
                 maximum = Chess.allowedAttacks[i];
@@ -83,8 +83,8 @@ public class ChessBot {
            // Best attack move
            if (highestValueStartingSquarePosition != -1) {
                Chess.pieceSelection(highestValueStartingSquarePosition, false);
-               System.out.println("AI: Found a valuable move from " + highestValueStartingSquarePosition +
-                       " to " + highestValueTargetSquare);
+               System.out.println("Computer: Found a valuable move from "+ ((char)('a' + (highestValueStartingSquarePosition % 8))) + (highestValueStartingSquarePosition / 8 + 1) +
+                       " to " + ((char)('a' + (highestValueTargetSquare % 8))) + (highestValueTargetSquare / 8 + 1));
            }
        } else {
            highestValueYet = -1;
@@ -97,16 +97,16 @@ public class ChessBot {
 
             // If nothing of value found, select sequentially
             for (int i = searchRange; i >= 0; i--) {
-                System.out.println("Loop in Question is working...");
+              //  System.out.println("Loop in Question is working...");
                 if (Pieces.isInBlack(Chess.pieces[i])) {
                     Arrays.fill(Chess.allowedAttacks, 0);
                     Arrays.fill(Chess.allowedMoves, 0);
                    // Chess.moveValidation(i);
                     Chess.pieceSelection(i, true);
                         Chess.isSelecting = false;
-                        System.out.println("AI: Chose fallback move at " + i);
-                        System.out.println("At least I found something...");
-                        System.out.println("Isselecting = " + Chess.isSelecting);
+                        System.out.println("Computer: Chose fallback move at " + i);
+                        System.out.println("Computer: At least I found something...");
+                        System.out.println("isSelecting = " + Chess.isSelecting);
                         break; // optimally has unselected itself
                 }
             }
@@ -135,7 +135,7 @@ public class ChessBot {
                 aiMoveSelection();
             }
             //Chess.gameLogic(highestValueTargetSquare, Chess.selectedPiece);
-            System.out.println("Ai: I chose to attack" + highestValueTargetSquare);
+            System.out.println("Computer: I chose to attack " + ((char)('a' + (highestValueTargetSquare % 8))) + (highestValueTargetSquare / 8 + 1));
             highestValueYet = -1;
             highestValueTargetSquare = -1;
             highestValueStartingSquarePosition = -1;
@@ -143,7 +143,7 @@ public class ChessBot {
             for (int i = 63; i >= 0; i--) {
                 if (Chess.allowedAttacks[i] != 0 || Chess.allowedMoves[i] != 0) {
                     Chess.gameLogic(i, Chess.selectedPiece);
-                    System.out.println("Ai: I chose" + i);
+                    System.out.println("Computer: I chose " + ((char)('a' + (i % 8))) + (i / 8 + 1) );
                     highestValueYet = -1;
                     highestValueTargetSquare = -1;
                     highestValueStartingSquarePosition = -1;
@@ -151,7 +151,7 @@ public class ChessBot {
                 }
             }
             if (!Chess.isSelecting) {
-                System.out.println("Ai: Damn. Found no target");
+                //System.out.println("Ai: Damn. Found no target");
                 Chess.isSelecting = true;
                 searchRange--;
                 System.out.println("Search Range: " + searchRange);
@@ -161,7 +161,8 @@ public class ChessBot {
                 Arrays.fill(Chess.squareColors, 0);
                 Chess.whiteTurn = true;
                 Visuals.printBoard();
-                System.out.println("Ai: Found absolutely nothing");
+                System.out.println("Computer: Found absolutely nothing");
+                System.out.println("Computer: I'm probably mate. GG!");
             }
         }
     }
