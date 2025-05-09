@@ -170,6 +170,7 @@ public class Visuals {
         System.out.println(board.toString());
     }
 
+
     private static final JButton[] squares = new JButton[64];
 
     public static void initGuiBoard() {
@@ -266,6 +267,7 @@ public class Visuals {
 
         frame.setVisible(true);
     }
+
     private static void updateGuiBoard() {
         for (int i = 0; i < 64; i++) {
             JButton square = squares[i];
