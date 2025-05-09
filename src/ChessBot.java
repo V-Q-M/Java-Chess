@@ -41,10 +41,10 @@ public class ChessBot {
     }
 
     public static int[] findTheMaximumAlgorithm(){
-        int maximum = -1;
+        int maximum = 0;
         int indexOfMax;
         int[] result = new int[]{-1,- 1};
-
+        System.out.println(Arrays.toString(Chess.allowedAttacks));
         for (int i = 0; i < 64; i++) {
             if (Chess.allowedAttacks[i] > maximum){
                 maximum = Chess.allowedAttacks[i];
@@ -62,75 +62,96 @@ public class ChessBot {
     static int highestValueStartingSquarePosition = -1;
 
     private static void aiMoveSelection(){
-        for (int i = 63; i >= 0; i--) {
+       if (searchRange == 63) {
+           for (int i = 63; i >= 0; i--) {
+               Arrays.fill(Chess.allowedAttacks, 0);
+               Arrays.fill(Chess.allowedMoves, 0);
+
+               if (Pieces.isInBlack(Chess.pieces[i])) {  // Is a black piece
+                   if (Chess.pieceSelection(i, true)) { // No bugs happend and filled allowed Attacks
+                       evaluateSquareWorth();
+                       int[] currentMaximum = findTheMaximumAlgorithm();
+
+                       if (currentMaximum[0] > highestValueYet) {
+                           highestValueYet = currentMaximum[0];
+                           highestValueStartingSquarePosition = i;
+                           highestValueTargetSquare = currentMaximum[1];
+                       }
+                   }
+               }
+           }
+           // Best attack move
+           if (highestValueStartingSquarePosition != -1) {
+               Chess.pieceSelection(highestValueStartingSquarePosition, false);
+               System.out.println("AI: Found a valuable move from " + highestValueStartingSquarePosition +
+                       " to " + highestValueTargetSquare);
+           }
+       } else {
+           highestValueYet = -1;
+           highestValueTargetSquare = -1;
+           highestValueStartingSquarePosition = -1;
+
+
             Arrays.fill(Chess.allowedAttacks, 0);
             Arrays.fill(Chess.allowedMoves, 0);
 
-            if (Pieces.isInBlack(Chess.pieces[i])) {  // Is a black piece
-                if (Chess.pieceSelection(i, true)) { // No bugs happend and filled allowed Attacks
-                    evaluateSquareWorth();
-                    int[] currentMaximum = findTheMaximumAlgorithm();
-
-                    if (currentMaximum[0] > highestValueYet) {
-                        highestValueYet = currentMaximum[0];
-                        highestValueStartingSquarePosition = i;
-                        highestValueTargetSquare = currentMaximum[1];
-                    }
-                }
-            }
-        }
-
-        // Best attack move
-        if (highestValueStartingSquarePosition != -1) {
-            Chess.pieceSelection(highestValueStartingSquarePosition, false);
-            System.out.println("AI: Found a valuable move from " + highestValueStartingSquarePosition +
-                    " to " + highestValueTargetSquare);
-        }
-
-        // If nothing of value found, select sequentially
-        for (int i = searchRange; i >= 0; i--) {
-            if (Pieces.isInBlack(Chess.pieces[i])) {
-                Arrays.fill(Chess.allowedAttacks, 0);
-                Arrays.fill(Chess.allowedMoves, 0);
-                Chess.moveValidation(i);
-                if (Chess.allowedMoves[i] != 0) {
+            // If nothing of value found, select sequentially
+            for (int i = searchRange; i >= 0; i--) {
+                System.out.println("Loop in Question is working...");
+                if (Pieces.isInBlack(Chess.pieces[i])) {
                     Arrays.fill(Chess.allowedAttacks, 0);
                     Arrays.fill(Chess.allowedMoves, 0);
-                    Chess.pieceSelection(i, false);
-                    System.out.println("AI: Chose fallback move at " + i);
-                    return;
+                   // Chess.moveValidation(i);
+                    Chess.pieceSelection(i, true);
+                        Chess.isSelecting = false;
+                        System.out.println("AI: Chose fallback move at " + i);
+                        System.out.println("At least I found something...");
+                        System.out.println("Isselecting = " + Chess.isSelecting);
+                        break; // optimally has unselected itself
                 }
             }
-        }
+       }
+       Chess.isSelecting = false;
 
-        // Nothing found
+/*
+        // Shouldnt reach this. If it does somethings wrong
         if (Chess.isSelecting) {
             Arrays.fill(Chess.allowedAttacks, 0);
             Arrays.fill(Chess.allowedMoves, 0);
             highestValueYet = 0;
             highestValueTargetSquare = 0;
             highestValueStartingSquarePosition = -1;
-            System.out.println("AI: No move found");
+            System.out.println("AI: No move found ERRRRRROR");
             Chess.isSelecting = false;
-        }
+        }*/
     }
 
 
     private static void aiMoveExecution(){
 
         if (highestValueTargetSquare >= 0) {
-            Chess.gameLogic(highestValueTargetSquare, Chess.selectedPiece);
+            System.out.println("SelectedPiece = " + Chess.selectedPiece);
+            if (!Chess.gameLogic(highestValueTargetSquare, Chess.selectedPiece)) {
+                aiMoveSelection();
+            }
+            //Chess.gameLogic(highestValueTargetSquare, Chess.selectedPiece);
             System.out.println("Ai: I chose to attack" + highestValueTargetSquare);
+            highestValueYet = -1;
+            highestValueTargetSquare = -1;
+            highestValueStartingSquarePosition = -1;
         } else {
             for (int i = 63; i >= 0; i--) {
-                if (Chess.allowedAttacks[i] != 0) {
+                if (Chess.allowedAttacks[i] != 0 || Chess.allowedMoves[i] != 0) {
                     Chess.gameLogic(i, Chess.selectedPiece);
                     System.out.println("Ai: I chose" + i);
+                    highestValueYet = -1;
+                    highestValueTargetSquare = -1;
+                    highestValueStartingSquarePosition = -1;
                     break;
                 }
             }
             if (!Chess.isSelecting) {
-                System.out.println("Ai: Damn. Found no move");
+                System.out.println("Ai: Damn. Found no target");
                 Chess.isSelecting = true;
                 searchRange--;
                 System.out.println("Search Range: " + searchRange);

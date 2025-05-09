@@ -169,7 +169,7 @@ public class Chess {
 
 
     // LOGIC
-    public static void gameLogic(int move, int selectedPiece){
+    public static boolean gameLogic(int move, int selectedPiece){
         // squarecolor, white = 0, red = 1, blue = 2, yellow = 3
         Arrays.fill(squareColors, 0); // clears colours
         Visuals.kingHasRedSquare();
@@ -207,6 +207,7 @@ public class Chess {
 
                 Visuals.printBoard();
                 System.out.println("Move prohibited. Protect your king!");
+                return false;
             }
 
         } else {
@@ -216,7 +217,7 @@ public class Chess {
         Arrays.fill(allowedMoves, 0);
         Arrays.fill(allowedAttacks, 0);
         isSelecting = true; // Change to selection mode
-        //return true;
+        return false;
     }
 
 
