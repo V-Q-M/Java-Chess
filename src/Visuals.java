@@ -27,8 +27,11 @@ public class Visuals {
             case "2" -> Chess.singlePlayer = false;
             case "3" -> System.exit(0);
         }
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
         System.out.println("Do you want CLI or GUI visuals?");
         System.out.println("1. CLI\n2. GUI");
+        System.out.println("Enter choice: ");
         String visualMode = Chess.scan.next();
         if (visualMode.equals("1")) Chess.cliStyle = true;
         else if (visualMode.equals("2")) Chess.cliStyle = false;
@@ -167,44 +170,99 @@ public class Visuals {
         System.out.println(board.toString());
     }
 
-    private static JFrame frame;
-    private static JPanel boardPanel;
-    private static JButton[] squares = new JButton[64];
+    private static final JButton[] squares = new JButton[64];
 
     public static void initGuiBoard() {
-        frame = new JFrame("Chess Board");
+        JFrame frame = new JFrame("Chess");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1200, 1200);
 
-        boardPanel = new JPanel(new GridLayout(8, 8));
+        JPanel boardPanel = new JPanel(new GridLayout(10, 10));
         frame.add(boardPanel);
 
-        for (int row = 7; row >= 0; row--) {
-            for (int col = 0; col < 8; col++) {
-                int index = row * 8 + col;
-                JButton square = new JButton();
-                square.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 80));
-                square.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                square.setFocusPainted(false);
+        Font labelFont = new Font("Noto Serif", Font.PLAIN, 55);
+        Font pieceFont = new Font("Segoe UI Symbol", Font.PLAIN, 95);
+        Color labelColor = new Color(240, 229, 225, 255); // Dark magenta or your choice
+        Color labelBackground = new Color(73, 71, 71);
+        for (int row = 9; row >= 0; row--) {
+            for (int col = 0; col <= 9; col++) {
+                // Top-left and bottom-right corners: just empty space
+                if ((row == 9 && col == 0) || (row == 0 && col == 9) || (row == 9 && col == 9) || (row == 0 && col == 0)) {
+                    JLabel empty = new JLabel();
+                    empty.setOpaque(true);
+                    empty.setBackground(labelBackground);
+                    boardPanel.add(empty);
+                }
 
-                int finalIndex = index;
-                char file = (char) ('a' + col);
-                int rank = row + 1;
-                String coordinate = "" + file + rank;
+                // Top row: column labels
+                else if (row == 9) {
+                    JLabel label = new JLabel(Character.toString((char) ('A' + col - 1)), SwingConstants.CENTER);
+                    label.setFont(labelFont);
+                    label.setForeground(labelColor);
+                    label.setOpaque(true);
+                    label.setBackground(labelBackground);
+                    boardPanel.add(label);
+                }
 
-                square.addActionListener(e -> {
-                    if (Chess.isSelecting) {
-                        Chess.pieceSelection(Chess.translateInput(coordinate));
-                    } else {
-                        Chess.gameLogic(Chess.translateInput(coordinate), Chess.selectedPiece);
-                    }
-                    updateGuiBoard(); // Just update visuals
-                });
+                // Bottom row: column labels
+                else if (row == 0) {
+                    JLabel label = new JLabel(Character.toString((char) ('A' + col - 1)), SwingConstants.CENTER);
+                    label.setFont(labelFont);
+                    label.setForeground(labelColor);
+                    label.setOpaque(true);
+                    label.setBackground(labelBackground);
+                    boardPanel.add(label);
+                }
 
-                squares[index] = square;
-                boardPanel.add(square);
+                // Left column: rank labels
+                else if (col == 0) {
+                    JLabel label = new JLabel(Integer.toString(row), SwingConstants.CENTER);
+                    label.setFont(labelFont);
+                    label.setForeground(labelColor);
+                    label.setOpaque(true);
+                    label.setBackground(labelBackground);
+                    boardPanel.add(label);
+                }
+
+                // Right column: rank labels
+                else if (col == 9) {
+                    JLabel label = new JLabel(Integer.toString(row), SwingConstants.CENTER);
+                    label.setFont(labelFont);
+                    label.setForeground(labelColor);
+                    label.setOpaque(true);
+                    label.setBackground(labelBackground);
+                    boardPanel.add(label);
+                }
+                else {
+                    int actualRow = row - 1;
+                    int actualCol = col - 1;
+                    int index = actualRow * 8 + actualCol;
+
+                    JButton square = new JButton();
+                    square.setFont(pieceFont);
+                    square.setBorder(BorderFactory.createLineBorder(new Color(28, 28, 28), 2));
+                    square.setFocusPainted(false);
+
+                    char file = (char) ('A' + actualCol);
+                    int rank = actualRow + 1;
+                    String coordinate = "" + file + rank;
+
+                    int finalIndex = index;
+                    square.addActionListener(e -> {
+                        if (Chess.isSelecting) {
+                            Chess.pieceSelection(Chess.translateInput(coordinate)); // Do as if you had typed your coordinate
+                        } else {
+                            Chess.gameLogic(Chess.translateInput(coordinate), Chess.selectedPiece);
+                        }
+                        updateGuiBoard(); // Just update visuals
+                    });
+
+                    squares[index] = square;
+                    boardPanel.add(square);
+                }
             }
         }
+        boardPanel.setBorder(BorderFactory.createLineBorder(new Color(28, 28, 28), 2));
 
         frame.setVisible(true);
     }
@@ -213,6 +271,7 @@ public class Visuals {
             JButton square = squares[i];
             int pieceId = Chess.pieces[i];
             square.setText(pieceVisuals(pieceId));
+            square.setOpaque(true);
 
             // Example color logic...
             square.setForeground(pieceId < 7 ? Color.WHITE : new Color(39, 39, 39));
@@ -221,14 +280,14 @@ public class Visuals {
             int row = i / 8;
             int col = i % 8;
             switch (Chess.squareColors[i]) {
-                case 1 -> square.setBackground(new Color(235, 60, 60, 128));
-                case 2 -> square.setBackground(new Color(53, 125, 202, 128));
-                case 3 -> square.setBackground(new Color(255, 187, 27, 128));
+                case 1 -> square.setBackground(new Color(210, 96, 96, 255));
+                case 2 -> square.setBackground(new Color(149, 186, 224, 255));
+                case 3 -> square.setBackground(new Color(227, 179, 92, 255));
                 default -> {
                     if ((row + col) % 2 == 0)
-                        square.setBackground(new Color(240, 229, 225));
-                    else
                         square.setBackground(new Color(70, 68, 68));
+                    else
+                        square.setBackground(new Color(240, 229, 225));
                 }
             }
         }
