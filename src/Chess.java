@@ -52,6 +52,7 @@ public class Chess {
     // SETTINGS
     public static int visualStyle = 1; //0 = Double letter pieces. 1 = Unicode pieces.
     public static boolean singlePlayer = true;
+    public static boolean cliStyle = false;
 
     // SETUP
     public static void startPosition(){
@@ -298,15 +299,15 @@ public class Chess {
     // MAIN LOOP
     public static void gameLoop(){
         startPosition();
-        Visuals.printBoard();
+       Visuals.printBoard();
         while(running){
             //System.out.println(Arrays.toString(pieces));
             if (whiteTurn) {
-                System.out.println("White turn" );
+               // System.out.println("White turn" );
             } else {
-                System.out.println("Black turn" );
+               // System.out.println("Black turn" );
             }
-            getInput();
+           getInput();
 
         }
 

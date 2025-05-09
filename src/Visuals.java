@@ -1,5 +1,14 @@
-public class Visuals {
+import javax.swing.*;
+import java.awt.*;
 
+public class Visuals {
+    final static String RED_BACKGROUND = "\u001B[41m";  // Red background
+    final static String BLUE_BACKGROUND = "\u001B[44m";  // Blue background
+    final static String YELLOW_BACKGROUND = "\u001B[43m";  // Yellow background
+    final static String RESET = "\u001B[0m";  // Reset
+    final static String WHITE_BACKGROUND = "\u001B[47m";  // White background for light squares
+    final static String BLACK_BACKGROUND = "\u001B[100m";  // Black background for dark squares
+     static StringBuilder board = new StringBuilder();  // Use StringBuilder for better performance
 
     public static void kingHasRedSquare(){
         if (Chess.blackCheck){
@@ -26,7 +35,7 @@ public class Visuals {
         final String WHITE = "\u001B[97m";
         final String BLACK = "\u001B[30m";
 
-        if (Chess.visualStyle == 1){
+        if (Chess.visualStyle == 1 && Chess.cliStyle){
             return switch(pieceId){
                 case Chess.whitePawn   -> WHITE + "♟";
                 case Chess.whiteRook   -> WHITE + "♜";
@@ -41,6 +50,23 @@ public class Visuals {
                 case Chess.blackBishop -> BLACK + "♝";
                 case Chess.blackQueen  -> BLACK + "♛";
                 case Chess.blackKing   -> BLACK + "♚";
+                default -> " ";
+            };
+        } else if (!Chess.cliStyle){
+            return switch(pieceId){
+                case Chess.whitePawn   -> "♟";
+                case Chess.whiteRook   -> "♜";
+                case Chess.whiteKnight -> "♞";
+                case Chess.whiteBishop -> "♝";
+                case Chess.whiteQueen  -> "♛";
+                case Chess.whiteKing   -> "♚";
+
+                case Chess.blackPawn   -> "♟";
+                case Chess.blackRook   -> "♜";
+                case Chess.blackKnight -> "♞";
+                case Chess.blackBishop -> "♝";
+                case Chess.blackQueen  -> "♛";
+                case Chess.blackKing   -> "♚";
                 default -> " ";
             };
         }
@@ -64,13 +90,11 @@ public class Visuals {
 
 
     public static void printBoard() {
-        final String RED_BACKGROUND = "\u001B[41m";  // Red background
-        final String BLUE_BACKGROUND = "\u001B[44m";  // Blue background
-        final String YELLOW_BACKGROUND = "\u001B[43m";  // Yellow background
-        final String RESET = "\u001B[0m";  // Reset
-        final String WHITE_BACKGROUND = "\u001B[47m";  // White background for light squares
-        final String BLACK_BACKGROUND = "\u001B[100m";  // Black background for dark squares
-        StringBuilder board = new StringBuilder();  // Use StringBuilder for better performance
+        if(Chess.cliStyle) cliStyleBoard();
+        else guiBoard();
+    }
+
+    private static void cliStyleBoard(){
         System.out.flush();
         // Header with column labels ┌───┐
         board.append("         ┌───┬───┬───┬───┬───┬───┬───┬───┐\n");
@@ -115,4 +139,61 @@ public class Visuals {
         // Print the final board
         System.out.println(board.toString());
     }
+
+    private static void guiBoard(){
+        JFrame frame = new JFrame("Chess Board");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 800);
+
+        JPanel boardPanel = new JPanel(new GridLayout(8, 8));
+        for (int row = 7; row >= 0; row--) {
+            for (int col = 0; col < 8; col++) {
+                int index = row * 8 + col;
+                int pieceId = Chess.pieces[index];
+
+                // Convert to chess coordinate
+                char file = (char) ('a' + col);     // a-h
+                int rank = row + 1;                 // 1-8
+                String coordinate = "" + file + rank;
+
+                JButton square = new JButton(pieceVisuals(pieceId));
+                square.setOpaque(true);
+                square.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 70));
+                square.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                square.setFocusPainted(false);
+
+                // Set foreground color (text color) based on piece
+                if (pieceId <  7) {
+                    square.setForeground(Color.WHITE); // white pieces
+                } else if (pieceId > 8) {
+                    square.setForeground(new Color(39, 39, 39)); // black pieces
+                }
+
+                // Background color logic (your original style)
+                switch (Chess.squareColors[index]) {
+                    case 1 -> square.setBackground(new Color(235, 60, 60, 128));   // red
+                    case 2 -> square.setBackground(new Color(53, 125, 202, 128));  // blue
+                    case 3 -> square.setBackground(new Color(255, 187, 27, 128));  // yellow
+                    default -> {
+                        if ((row + col) % 2 == 0) {
+                            square.setBackground(new Color(240, 229, 225)); // light
+                        } else {
+                            square.setBackground(new Color(70, 68, 68));    // dark
+                        }
+                    }
+                }
+
+                // Print square coordinate on click
+                square.addActionListener(e -> Chess.pieceSelection(Chess.translateInput(coordinate)));
+
+                boardPanel.add(square);
+            }
+        }
+
+        frame.add(boardPanel);
+        frame.setVisible(true);
+    }
+
+
+
 }
