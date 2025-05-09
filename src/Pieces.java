@@ -104,18 +104,12 @@ public class Pieces {
     public static void rookPattern(int index, int color){
         // up
         for (int i = index + 8; i < 64; i += 8) {
-            if (i >= 64) {
-                break;
-            }
             if (decideMove(i, color)) { // If returns true, there is collision and it should be stopped
                 break;
             }
         }
         // down
         for (int i = index - 8; i >= 0; i -= 8) {
-            if (i < 0) {
-                break;
-            }
             if (decideMove(i, color)) { // If returns true, there is collision and it should be stopped
                 break;
             }
@@ -164,7 +158,7 @@ public class Pieces {
     public static void bishopPattern(int index, int color){
         // up
         for (int i = index + 9; i < 64; i += 9) {
-            if (i >= 64 || i % 8 == 0) {
+            if (i % 8 == 0) {
                 break;
             }
             if (decideMove(i, color)) { // If returns true, there is collision and it should be stopped
@@ -173,7 +167,7 @@ public class Pieces {
         }
         // down
         for (int i = index - 9; i >= 0; i -= 9) {
-            if (i < 0 || i % 8 == 7) {
+            if (i % 8 == 7) {
                 break;
             }
             if (decideMove(i, color)) { // If returns true, there is collision and it should be stopped
@@ -182,7 +176,7 @@ public class Pieces {
         }
         // up
         for (int i = index + 7; i < 64; i += 7) {
-            if (i >= 64 || i % 8 == 7) {
+            if (i % 8 == 7) {
                 break;
             }
             if (decideMove(i, color)) { // If returns true, there is collision and it should be stopped
@@ -191,7 +185,7 @@ public class Pieces {
         }
         // down
         for (int i = index - 7; i >= 0; i -= 7) {
-            if (i < 0 || i % 8 == 0) {
+            if (i % 8 == 0) {
                 break;
             }
             if (decideMove(i, color)) { // If returns true, there is collision and it should be stopped
