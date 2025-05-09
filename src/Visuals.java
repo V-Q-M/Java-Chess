@@ -268,7 +268,7 @@ public class Visuals {
         frame.setVisible(true);
     }
 
-    private static void updateGuiBoard() {
+    static void updateGuiBoard() {
         for (int i = 0; i < 64; i++) {
             JButton square = squares[i];
             int pieceId = Chess.pieces[i];

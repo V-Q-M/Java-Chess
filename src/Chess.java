@@ -323,7 +323,9 @@ public class Chess {
                System.out.println("Black turn" );
             }
             if (multiPlayer || whiteTurn) {
-                getInput();
+                if (cliStyle){
+                    getInput();
+                }
                 ChessBot.searchRange = 63;
             } else {
                 ChessBot.aiFirstSteps();

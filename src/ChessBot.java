@@ -139,6 +139,8 @@ public class ChessBot {
             highestValueYet = -1;
             highestValueTargetSquare = -1;
             highestValueStartingSquarePosition = -1;
+
+            //Visuals.updateGuiBoard();
         } else {
             for (int i = 63; i >= 0; i--) {
                 if (Chess.allowedAttacks[i] != 0 || Chess.allowedMoves[i] != 0) {
@@ -147,6 +149,8 @@ public class ChessBot {
                     highestValueYet = -1;
                     highestValueTargetSquare = -1;
                     highestValueStartingSquarePosition = -1;
+
+                    //Visuals.updateGuiBoard();
                     break;
                 }
             }
@@ -161,8 +165,11 @@ public class ChessBot {
                 Arrays.fill(Chess.squareColors, 0);
                 Chess.whiteTurn = true;
                 Visuals.printBoard();
+
                 System.out.println("Computer: Found absolutely nothing");
                 System.out.println("Computer: I'm probably mate. GG!");
+
+                //Visuals.updateGuiBoard();
             }
         }
     }
