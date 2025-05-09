@@ -106,6 +106,8 @@ public class Chess {
             if (move != -1){
                 if (isSelecting) pieceSelection(move);
                 else gameLogic(move, selectedPiece);
+                System.out.flush();
+                Visuals.mainMenu();
                 //System.out.println("You entered: " + moveString);
             } else {
                 System.out.println("Invalid move");
