@@ -73,11 +73,11 @@ public class Visuals {
         StringBuilder board = new StringBuilder();  // Use StringBuilder for better performance
         System.out.flush();
         // Header with column labels ┌───┐
-        board.append("   ┌───┬───┬───┬───┬───┬───┬───┬───┐\n");
+        board.append("         ┌───┬───┬───┬───┬───┬───┬───┬───┐\n");
 
         // Loop through the board from row 7 (top) to row 0 (bottom)
         for (int row = 7; row >= 0; row--) {
-            board.append(" ").append(row + 1).append(" │");  // Print the rank number at the beginning
+            board.append("       ").append(row + 1).append(" │");  // Print the rank number at the beginning
 
             // Loop through columns from 0 to 7
             for (int col = 0; col < 8; col++) {
@@ -105,12 +105,12 @@ public class Visuals {
 
             // Add row separator and move to the next line
             if (row > 0) {
-                board.append("\n   ├───┼───┼───┼───┼───┼───┼───┼───┤\n");
+                board.append("\n         ├───┼───┼───┼───┼───┼───┼───┼───┤\n");
             } else {
-                board.append("\n   └───┴───┴───┴───┴───┴───┴───┴───┘\n");
+                board.append("\n         └───┴───┴───┴───┴───┴───┴───┴───┘\n");
             }
         }
-        board.append("     A   B   C   D   E   F   G   H \n");
+        board.append("           A   B   C   D   E   F   G   H \n");
 
         // Print the final board
         System.out.println(board.toString());

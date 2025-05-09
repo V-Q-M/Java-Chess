@@ -156,7 +156,6 @@ public class Chess {
     }
 
 
-
     // LOGIC
     public static void gameLogic(int move, int selectedPiece){
         // squarecolor, white = 0, red = 1, blue = 2, yellow = 3
@@ -205,8 +204,8 @@ public class Chess {
 
     }
 
-    // MOVEMENT
 
+    // MOVEMENT
     public static void moveValidation(int move){
         switch (pieces[move]){
             case whitePawn   -> Pieces.whitePawnPattern(move);
@@ -314,11 +313,29 @@ public class Chess {
     }
 
 
+    public static void mainMenu(){
+        System.out.print("""
+\u001B[32m┌────────────────────────────────────────────────┐
+│  ___  __    __     ___  _  _  ____  ____  ____ │
+│ / __)(  )  (  )   / __)/ )( \\(  __)/ ___)/ ___)│
+│( (__ / (_/\\ )(   ( (__ ) __ ( ) _) \\___ \\\\___ \\│
+│ \\___)\\____/(__)   \\___)\\_)(_/(____)(____/(____/│
+└────────────────────────────────────────────────┘\u001B[0m
+""");
+        System.out.println("                 \u001B[32m1. Singleplayer\n                 2. Multiplayer\n                 3.    Quit\u001B[0m");
+        System.out.print("                \u001B[40mEnter your choice: \u001B[0m");
+        String prompt = scan.next();
+        switch (prompt){
+            case "1" -> singlePlayer = true;
+            case "2" -> singlePlayer = false;
+            case "3" -> System.exit(0);
+        }
+    }
 
     public static void main(String[] args) {
-        System.out.println("Welcome to Chess!");
+        mainMenu();
         gameLoop();
-
+        System.out.flush();
         System.out.println("You exited the game.");
 
     }
