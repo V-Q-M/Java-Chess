@@ -35,9 +35,6 @@ public class Chess {
     final static int blackQueen = 15;
     final static int blackKing = 16;
 
-    final static int[] whitePieces = {whitePawn, whiteRook, whiteKnight, whiteBishop, whiteQueen, whiteKing};
-    final static int[] blackPieces = {blackPawn, blackRook, blackKnight, blackBishop, blackQueen, blackKing};
-
     // Needed for move checking
     static int selectedPiece = -1;
     static int oldPosition = -1;
@@ -45,8 +42,8 @@ public class Chess {
     // PIECES
     static int[] pieces = new int[64]; // stores the positions of the pieces
     static int[] squareColors = new int[64]; // stores the color each square should have
-    static boolean[] allowedMoves = new boolean[64]; // stores the allowed moves of one piece
-    static boolean[] allowedAttacks = new boolean[64]; //Same thing but for attacks
+    static int[] allowedMoves = new int[64]; // stores the allowed moves of one piece
+    static int[] allowedAttacks = new int[64]; //Same thing but for attacks
     static Scanner scan = new Scanner(System.in);
 
     // SETTINGS
@@ -106,7 +103,7 @@ public class Chess {
             if (move != -1){
                 System.out.print("\033[H\033[2J");
                 System.out.flush();
-                if (isSelecting) pieceSelection(move);
+                if (isSelecting) pieceSelection(move, false);
                 else gameLogic(move, selectedPiece);
                 //System.out.println("You entered: " + moveString);
             } else {
@@ -136,28 +133,34 @@ public class Chess {
     }
     // AI needs to enter their move here
     // AI inputs 52 meaning e7
-    public static boolean pieceSelection(int move){
+    public static boolean pieceSelection(int move, boolean AiMove){
         // If player touches his pieces
         if ((whiteTurn && Pieces.isInWhite(pieces[move])) || (!whiteTurn && Pieces.isInBlack(pieces[move]))){
             squareColors[move] = 3; // Color the square yellow
             moveValidation(move); // Get all valid moves
 
-            for (int i = 0; i < 64; i++){
-                if (allowedAttacks[i]){
-                    squareColors[i] = 1;  //Attacks get colored redd
-                }
-                else if (allowedMoves[i]){ // It's a boolean
-                    squareColors[i] = 2; // These ones are blue
+            if (!AiMove){
+                for (int i = 0; i < 64; i++){
+                    if (allowedAttacks[i] != 0){
+                        squareColors[i] = 1;  //Attacks get colored redd
+                    }
+                    else if (allowedMoves[i] != 0){ // It's a boolean
+                        squareColors[i] = 2; // These ones are blue
+                    }
                 }
             }
             selectedPiece = pieces[move]; // selects the inputted piece
             oldPosition = move; // needed for validation
-            isSelecting = false; // Selection is over
-            System.out.print("\033[H\033[2J");
-            System.out.flush();
-            Visuals.printBoard();
+
+            if (!AiMove) {
+                isSelecting = false;// Selection is over
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                Visuals.printBoard();
+            }
+
             return true;
-        } else {
+        } else if (!AiMove){
             System.out.println("Not your piece...");
         }
 
@@ -166,15 +169,15 @@ public class Chess {
 
 
     // LOGIC
-    public static boolean gameLogic(int move, int selectedPiece){
+    public static void gameLogic(int move, int selectedPiece){
         // squarecolor, white = 0, red = 1, blue = 2, yellow = 3
         Arrays.fill(squareColors, 0); // clears colours
         Visuals.kingHasRedSquare();
 
         // Moving part
-        if (allowedMoves[move] || allowedAttacks[move]){
-            Arrays.fill(allowedMoves, false);
-            Arrays.fill(allowedAttacks, false);
+        if (allowedMoves[move] != 0 || allowedAttacks[move] != 0){
+            Arrays.fill(allowedMoves, 0);
+            Arrays.fill(allowedAttacks, 0);
             int savePiece = pieces[move];
             pieces[move] = selectedPiece; // Put new pieces to new position
             pieces[oldPosition] = emptySquare; //clear old square
@@ -193,8 +196,8 @@ public class Chess {
                 Visuals.kingHasRedSquare();
                 Visuals.printBoard();
 
-                Arrays.fill(allowedMoves, false);
-                Arrays.fill(allowedAttacks, false);
+                Arrays.fill(allowedMoves, 0);
+                Arrays.fill(allowedAttacks, 0);
                 whiteTurn = !whiteTurn; // other players turn
                 // next player
             } else {
@@ -210,10 +213,10 @@ public class Chess {
             Visuals.printBoard();
             System.out.println("Invalid move");
         }
-        Arrays.fill(allowedMoves, false);
-        Arrays.fill(allowedAttacks, false);
+        Arrays.fill(allowedMoves, 0);
+        Arrays.fill(allowedAttacks, 0);
         isSelecting = true; // Change to selection mode
-        return true;
+        //return true;
     }
 
 
@@ -236,7 +239,7 @@ public class Chess {
         }
     }
 
-    public static boolean checkDetection(boolean checkWhite) {
+    public static void checkDetection(boolean checkWhite) {
         // For white side
         int kingPosition = -1;
 
@@ -247,10 +250,10 @@ public class Chess {
                 if (Pieces.isInWhite(pieces[i])) moveValidation(i);
             }
 
-            if (allowedAttacks[kingPosition]) {
+            if (allowedAttacks[kingPosition] != 0) {
                 System.out.println("Black King is check!");
                 blackCheck = true;
-                return true;
+                //return true;
             } else {
                 blackCheck = false;
             }
@@ -262,16 +265,16 @@ public class Chess {
                 if (Pieces.isInBlack(pieces[i])) moveValidation(i);
             }
 
-            if (allowedAttacks[kingPosition]) {
+            if (allowedAttacks[kingPosition] != 0) {
                 System.out.println("White King is check!");
                 whiteCheck = true;
-                return true;
+                //return true;
             } else {
                 whiteCheck = false;
             }
         }
         //System.out.println(Arrays.toString(allowedAttacks));
-        return false;
+       // return false;
     }
 
     public static boolean checkDetectionWithoutMarker(boolean checkWhite){
@@ -283,7 +286,7 @@ public class Chess {
                 if (pieces[i] == blackKing) kingPosition = i;
                 if (Pieces.isInWhite(pieces[i])) moveValidation(i);
             }
-            if (allowedAttacks[kingPosition]){
+            if (allowedAttacks[kingPosition] != 0){
                 System.out.println("Black King is check!");
                 return true;
             } else {
@@ -294,7 +297,7 @@ public class Chess {
                 if (pieces[i] == whiteKing) kingPosition = i;
                 if (Pieces.isInBlack(pieces[i])) moveValidation(i);
             }
-            if (allowedAttacks[kingPosition]){
+            if (allowedAttacks[kingPosition] != 0){
                 System.out.println("White King is check!");
                 return true;
             }

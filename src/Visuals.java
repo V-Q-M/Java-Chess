@@ -251,7 +251,7 @@ public class Visuals {
 
                     square.addActionListener(e -> {
                         if (Chess.isSelecting) {
-                            Chess.pieceSelection(Chess.translateInput(coordinate)); // Do as if you had typed your coordinate
+                            Chess.pieceSelection(Chess.translateInput(coordinate), false); // Do as if you had typed your coordinate
                         } else {
                             Chess.gameLogic(Chess.translateInput(coordinate), Chess.selectedPiece);
                         }

@@ -17,10 +17,10 @@ public class Pieces {
     // Helper function
     public static boolean decideMove(int i, int color){
         if (Chess.pieces[i] == Chess.emptySquare) {
-            Chess.allowedMoves[i] = true;
+            Chess.allowedMoves[i] = 1;
         }
         else if ((isInBlack(Chess.pieces[i]) && color == 0) || (isInWhite(Chess.pieces[i]) && color == 1)) {
-            Chess.allowedAttacks[i] = true;
+            Chess.allowedAttacks[i] = 1;
             return true;
         }
         else if ((isInBlack(Chess.pieces[i]) && color == 1) || (isInWhite(Chess.pieces[i]) && color == 0)) {
@@ -31,9 +31,9 @@ public class Pieces {
 
     public static void simplifiedDecideMove(int target, int color){
         if (Chess.pieces[target] == Chess.emptySquare){
-            Chess.allowedMoves[target] = true;
+            Chess.allowedMoves[target] = 1;
         } else if ((isInBlack(Chess.pieces[target]) && color == 0) || (isInWhite(Chess.pieces[target]) && color == 1)) {
-            Chess.allowedAttacks[target] = true;
+            Chess.allowedAttacks[target] = 1;
         }
     }
 
@@ -46,26 +46,26 @@ public class Pieces {
         int target = index + 8;
         if (target < 64) {
             if (Chess.pieces[target] == Chess.emptySquare){
-                Chess.allowedMoves[target] = true;
+                Chess.allowedMoves[target] = 1;
             }
         }
         target = index + 16;
         if ((target < 64) && index < 16) {
             if (Chess.pieces[target] == Chess.emptySquare) {
-                Chess.allowedMoves[target] = true;
+                Chess.allowedMoves[target] = 1;
             }
         }
 
         target = index + 9;
         if ((target < 64) && ((target % 8) != 0)) {
             if (isInBlack(Chess.pieces[target])) {
-                Chess.allowedAttacks[target] = true;
+                Chess.allowedAttacks[target] = 1;
             }
         }
         target = index + 7;
         if ((target < 64) && ((target % 8) != 7)) {
             if (isInBlack(Chess.pieces[target])) {
-                Chess.allowedAttacks[target] = true;
+                Chess.allowedAttacks[target] = 1;
             }
         }
 
@@ -75,26 +75,26 @@ public class Pieces {
         int target = index - 8;
         if (target >= 0) {
             if (Chess.pieces[target] == Chess.emptySquare) {
-                Chess.allowedMoves[target] = true;
+                Chess.allowedMoves[target] = 1;
             }
 
         }
         target = index - 16;
         if ((target >= 0) && (index >= 48)) {
             if (Chess.pieces[target] == Chess.emptySquare) {
-                Chess.allowedMoves[target] = true;
+                Chess.allowedMoves[target] = 1;
             }
         }
         target = index - 9;
         if ((target >= 0) && ((target % 8) != 7)) {
             if (isInWhite(Chess.pieces[target])) {
-                Chess.allowedAttacks[target] = true;
+                Chess.allowedAttacks[target] = 1;
             }
         }
         target = index - 7;
         if ((target >= 0) && ((target % 8) != 0)) {
             if (isInWhite(Chess.pieces[target])) {
-                Chess.allowedAttacks[target] = true;
+                Chess.allowedAttacks[target] = 1;
             }
         }
 
