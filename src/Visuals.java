@@ -91,7 +91,7 @@ public class Visuals {
 
     public static void printBoard() {
         if(Chess.cliStyle) cliStyleBoard();
-        else guiBoard();
+        else updateGuiBoard();
     }
 
     private static void cliStyleBoard(){
@@ -140,58 +140,71 @@ public class Visuals {
         System.out.println(board.toString());
     }
 
-    private static void guiBoard(){
-        JFrame frame = new JFrame("Chess Board");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 800);
+    private static JFrame frame;
+    private static JPanel boardPanel;
+    private static JButton[] squares = new JButton[64];
 
-        JPanel boardPanel = new JPanel(new GridLayout(8, 8));
+    public static void initGuiBoard() {
+        frame = new JFrame("Chess Board");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1200, 1200);
+
+        boardPanel = new JPanel(new GridLayout(8, 8));
+        frame.add(boardPanel);
+
         for (int row = 7; row >= 0; row--) {
             for (int col = 0; col < 8; col++) {
                 int index = row * 8 + col;
-                int pieceId = Chess.pieces[index];
-
-                // Convert to chess coordinate
-                char file = (char) ('a' + col);     // a-h
-                int rank = row + 1;                 // 1-8
-                String coordinate = "" + file + rank;
-
-                JButton square = new JButton(pieceVisuals(pieceId));
-                square.setOpaque(true);
-                square.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 70));
+                JButton square = new JButton();
+                square.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 80));
                 square.setBorder(BorderFactory.createLineBorder(Color.BLACK));
                 square.setFocusPainted(false);
 
-                // Set foreground color (text color) based on piece
-                if (pieceId <  7) {
-                    square.setForeground(Color.WHITE); // white pieces
-                } else if (pieceId > 8) {
-                    square.setForeground(new Color(39, 39, 39)); // black pieces
-                }
+                int finalIndex = index;
+                char file = (char) ('a' + col);
+                int rank = row + 1;
+                String coordinate = "" + file + rank;
 
-                // Background color logic (your original style)
-                switch (Chess.squareColors[index]) {
-                    case 1 -> square.setBackground(new Color(235, 60, 60, 128));   // red
-                    case 2 -> square.setBackground(new Color(53, 125, 202, 128));  // blue
-                    case 3 -> square.setBackground(new Color(255, 187, 27, 128));  // yellow
-                    default -> {
-                        if ((row + col) % 2 == 0) {
-                            square.setBackground(new Color(240, 229, 225)); // light
-                        } else {
-                            square.setBackground(new Color(70, 68, 68));    // dark
-                        }
+                square.addActionListener(e -> {
+                    if (Chess.isSelecting) {
+                        Chess.pieceSelection(Chess.translateInput(coordinate));
+                    } else {
+                        Chess.gameLogic(Chess.translateInput(coordinate), Chess.selectedPiece);
                     }
-                }
+                    updateGuiBoard(); // Just update visuals
+                });
 
-                // Print square coordinate on click
-                square.addActionListener(e -> Chess.pieceSelection(Chess.translateInput(coordinate)));
-
+                squares[index] = square;
                 boardPanel.add(square);
             }
         }
 
-        frame.add(boardPanel);
         frame.setVisible(true);
+    }
+    private static void updateGuiBoard() {
+        for (int i = 0; i < 64; i++) {
+            JButton square = squares[i];
+            int pieceId = Chess.pieces[i];
+            square.setText(pieceVisuals(pieceId));
+
+            // Example color logic...
+            square.setForeground(pieceId < 7 ? Color.WHITE : new Color(39, 39, 39));
+
+            // Set background color
+            int row = i / 8;
+            int col = i % 8;
+            switch (Chess.squareColors[i]) {
+                case 1 -> square.setBackground(new Color(235, 60, 60, 128));
+                case 2 -> square.setBackground(new Color(53, 125, 202, 128));
+                case 3 -> square.setBackground(new Color(255, 187, 27, 128));
+                default -> {
+                    if ((row + col) % 2 == 0)
+                        square.setBackground(new Color(240, 229, 225));
+                    else
+                        square.setBackground(new Color(70, 68, 68));
+                }
+            }
+        }
     }
 
 

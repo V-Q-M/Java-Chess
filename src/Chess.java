@@ -52,7 +52,7 @@ public class Chess {
     // SETTINGS
     public static int visualStyle = 1; //0 = Double letter pieces. 1 = Unicode pieces.
     public static boolean singlePlayer = true;
-    public static boolean cliStyle = false;
+    public static boolean cliStyle = true;
 
     // SETUP
     public static void startPosition(){
@@ -303,9 +303,9 @@ public class Chess {
         while(running){
             //System.out.println(Arrays.toString(pieces));
             if (whiteTurn) {
-               // System.out.println("White turn" );
+               System.out.println("White turn" );
             } else {
-               // System.out.println("Black turn" );
+               System.out.println("Black turn" );
             }
            getInput();
 
@@ -331,10 +331,16 @@ public class Chess {
             case "2" -> singlePlayer = false;
             case "3" -> System.exit(0);
         }
+        System.out.println("Do you want CLI or GUI visuals?");
+        System.out.println("1. CLI\n2. GUI");
+        String visualMode = scan.next();
+        if (visualMode.equals("1")) cliStyle = true;
+        else if (visualMode.equals("2")) cliStyle = false;
     }
 
     public static void main(String[] args) {
         mainMenu();
+        if (!cliStyle) Visuals.initGuiBoard();
         gameLoop();
         System.out.flush();
         System.out.println("You exited the game.");
