@@ -113,17 +113,6 @@ public class ChessBot {
        }
        Chess.isSelecting = false;
 
-/*
-        // Shouldnt reach this. If it does somethings wrong
-        if (Chess.isSelecting) {
-            Arrays.fill(Chess.allowedAttacks, 0);
-            Arrays.fill(Chess.allowedMoves, 0);
-            highestValueYet = 0;
-            highestValueTargetSquare = 0;
-            highestValueStartingSquarePosition = -1;
-            System.out.println("AI: No move found ERRRRRROR");
-            Chess.isSelecting = false;
-        }*/
     }
 
 
