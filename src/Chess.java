@@ -104,6 +104,8 @@ public class Chess {
         else if (moveString != null && moveString.length() == 2){
             int move = translateInput(moveString); // Convert input to an index
             if (move != -1){
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
                 if (isSelecting) pieceSelection(move);
                 else gameLogic(move, selectedPiece);
                 //System.out.println("You entered: " + moveString);
@@ -150,6 +152,8 @@ public class Chess {
             selectedPiece = pieces[move]; // selects the inputted piece
             oldPosition = move; // needed for validation
             isSelecting = false;
+            System.out.print("\033[H\033[2J");
+            System.out.flush();
             Visuals.printBoard();
         } else {
             System.out.println("Not your piece...");
@@ -180,8 +184,11 @@ public class Chess {
                     pieces[move] = blackQueen;
                 }
                 Arrays.fill(squareColors, 0);
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
                 Visuals.kingHasRedSquare();
                 Visuals.printBoard();
+
                 Arrays.fill(allowedMoves, false);
                 Arrays.fill(allowedAttacks, false);
                 whiteTurn = !whiteTurn; // other players turn
