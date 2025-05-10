@@ -213,6 +213,7 @@ public class Chess {
         } else {
             Visuals.printBoard();
             System.out.println("Invalid move");
+            System.out.println("Breakpoint here: 216");
         }
         Arrays.fill(allowedMoves, 0);
         Arrays.fill(allowedAttacks, 0);

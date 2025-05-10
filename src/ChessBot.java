@@ -18,49 +18,50 @@ public class ChessBot {
                             0,0,0,0,0,0,0,0,
                             5,0,0,0,0,0,0,5};
 
-    static int[] pawnMap = {5,0,0,0,0,0,0,5,
+    static int[] pawnMap = {0,0,0,0,0,0,0,0,
                             0,0,0,0,0,0,0,0,
-                            1,1,1,1,1,1,1,1,
-                            5,5,5,7,7,5,5,5,
+                            0,0,0,0,0,0,0,0,
+                            0,0,0,0,0,0,0,0,
                             5,5,5,7,7,5,5,5,
                             1,1,1,1,1,1,1,1,
                             0,0,0,0,0,0,0,0,
-                            5,0,0,0,0,0,0,5};
+                            5,5,5,5,5,5,5,5};
 
     static int[] knightMap = {-10,-10,-10,-10,-10,-10,-10,-10,
                             10,12,15,15,15,15,12,10,
-                            15,150,20,20,20,20,15,15,
+                            15,15,20,20,20,20,15,15,
+                            15,15,20,20,20,20,15,15,
+                            15,15,20,20,20,20,15,15,
                             15,15,20,20,20,20,15,15,
                             10,12,15,15,15,15,12,10,
-                            -5,-5,-5,-5,-5,-5,-5,-5,
                             -10,-10,-10,-10,-10,-10,-10,-10};
 
     static int[] bishopMap = {5,0,0,0,0,0,0,5,
-                                0,10,0,0,0,0,10,0,
-                                0,0,0,0,0,0,0,0,
-                                0,0,0,15,15,0,0,0,
-                                0,0,0,15,15,0,0,0,
-                                0,0,0,0,0,0,0,0,
-                                0,10,0,0,0,0,10,0,
-                                5,0,0,0,0,0,0,5};
+                            0,6,0,0,0,0,6,0,
+                            0,0,0,0,0,0,0,0,
+                            0,0,0,15,15,0,0,0,
+                            0,0,0,15,15,0,0,0,
+                            0,0,0,0,0,0,0,0,
+                            0,10,0,0,0,0,10,0,
+                            5,-5,-5,-5,-5,-5,-5,5};
 
-    static int[] queenMap ={5,0,0,0,0,0,0,5,
+    static int[] queenMap ={5,5,5,0,0,5,5,5,
                             0,0,0,0,0,0,0,0,
                             0,0,0,0,0,0,0,0,
                             0,0,0,0,0,0,0,0,
-                            0,0,0,0,0,0,0,0,
-                            0,0,0,0,0,0,0,0,
-                            0,0,0,0,0,0,0,0,
-                            5,0,0,0,0,0,0,5};
+                            5,5,5,5,5,5,5,5,
+                            2,5,7,10,10,7,5,2,
+                            -5,5,5,5,5,5,5,-5,
+                            5,-5,-5,-5,-5,-5,-5,5};
 
-    static int[] kingMap = {5,0,0,0,0,0,0,5,
-            0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,
-            5,0,0,0,0,0,0,5};
+    static int[] kingMap = {-10,-10,-10,-10,-10,-10,-10,-10
+            -10,-10,-10,-10,-10,-10,-10,-10
+            -10,-10,-10,-10,-10,-10,-10,-10
+            -10,-10,-10,-10,-10,-10,-10,-10
+            -10,-10,-10,-10,-10,-10,-10,-10
+            -2,-3,-5,-5,-5,-5,-3,-2,
+            2,2,2,1,1,2,2,2,
+            10,5,5,5,5,5,5,10};
 
     static int[] squareOffsets = {};
 
@@ -69,6 +70,7 @@ public class ChessBot {
     // - Make it prioritize moving higher value pieces
     // - Make it prioritize squares with high scores. Need some values for that
     // - To do that we add the piece Values to the allowedMoves/ allowedAttack arrays
+    // - Need to add a layer, so every move also checks enemy response
 
     private static void offsetMap(int i){
             switch (Chess.pieces[i]) {
@@ -246,6 +248,7 @@ public class ChessBot {
             }
             //Chess.gameLogic(highestValueTargetSquare, Chess.selectedPiece);
             System.out.println("Computer: I chose to attack " + ((char)('a' + (highestValueTargetSquare % 8))) + (highestValueTargetSquare / 8 + 1));
+            Chess.isSelecting = true;
             highestValueYet = -1;
             highestValueTargetSquare = -1;
             highestValueStartingSquarePosition = -1;
