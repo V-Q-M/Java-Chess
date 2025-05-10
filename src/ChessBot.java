@@ -15,13 +15,13 @@ public class ChessBot {
                             0,0,0,0,0,0,0,0,
                             0,0,0,0,0,0,0,0,
                             0,0,0,0,0,0,0,0,
-                            0,0,0,0,0,0,0,0,
-                            5,0,0,0,0,0,0,5};
+                            3,0,0,5,0,0,0,3,
+                            5,0,0,10,0,0,0,5};
 
     static int[] pawnMap = {0,0,0,0,0,0,0,0,
                             0,0,0,0,0,0,0,0,
                             0,0,0,0,0,0,0,0,
-                            0,0,0,0,0,0,0,0,
+                            1,2,2,2,2,2,2,1,
                             5,5,5,7,7,5,5,5,
                             1,1,1,1,1,1,1,1,
                             0,0,0,0,0,0,0,0,
@@ -61,7 +61,7 @@ public class ChessBot {
                             -10,-10,-10,-10,-10,-10,-10,-10,
                             -2,-3,-5,-5,-5,-5,-3,-2,
                             2,2,2,1,1,2,2,2,
-                            10,5,5,5,5,5,5,10};
+                            2,2,2,2,2,2,2,2};
 
     static int[] squareOffsets = {};
 
@@ -276,6 +276,7 @@ public class ChessBot {
         if (highestValueTargetSquare >= 0) {
             System.out.println("SelectedPiece = " + Chess.selectedPiece);
             if (!Chess.gameLogic(highestValueTargetSquare, Chess.selectedPiece)) {
+                searchRange--;
                 aiMoveSelection(blackTurn);
             }
             //Chess.gameLogic(highestValueTargetSquare, Chess.selectedPiece);
