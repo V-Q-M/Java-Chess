@@ -9,6 +9,7 @@ public class ChessBot {
     final static int rookValue = 5;
     final static int queenValue = 9;
 
+    static int[] squareOffsets = {};
 
     // Very simple AI. Takes the first piece it sees and moves it to the first location it sees
     // Optimizations:
