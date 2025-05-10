@@ -160,7 +160,7 @@ public class Chess {
             }
 
             return true;
-        } else if (!AiMove){
+        } else if (multiPlayer){
             System.out.println("Not your piece...");
         }
 

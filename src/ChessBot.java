@@ -3,11 +3,64 @@ import java.util.Arrays;
 public class ChessBot {
     static int searchRange = 63;
     // KEYS
-    final static int pawnValue = 1;
-    final static int knightValue = 3;
-    final static int bishopValue = 3;
-    final static int rookValue = 5;
-    final static int queenValue = 9;
+    final static int pawnValue = 10;
+    final static int knightValue = 30;
+    final static int bishopValue = 30;
+    final static int rookValue = 50;
+    final static int queenValue = 90;
+
+    static int[] rookMap = {5,0,0,0,0,0,0,5,
+                            0,0,0,0,0,0,0,0,
+                            0,0,0,0,0,0,0,0,
+                            0,0,0,0,0,0,0,0,
+                            0,0,0,0,0,0,0,0,
+                            0,0,0,0,0,0,0,0,
+                            0,0,0,0,0,0,0,0,
+                            5,0,0,0,0,0,0,5};
+
+    static int[] pawnMap = {5,0,0,0,0,0,0,5,
+                            0,0,0,0,0,0,0,0,
+                            1,1,1,1,1,1,1,1,
+                            5,5,5,7,7,5,5,5,
+                            5,5,5,7,7,5,5,5,
+                            1,1,1,1,1,1,1,1,
+                            0,0,0,0,0,0,0,0,
+                            5,0,0,0,0,0,0,5};
+
+    static int[] knightMap = {-10,-10,-10,-10,-10,-10,-10,-10,
+                            10,12,15,15,15,15,12,10,
+                            15,150,20,20,20,20,15,15,
+                            15,15,20,20,20,20,15,15,
+                            10,12,15,15,15,15,12,10,
+                            -5,-5,-5,-5,-5,-5,-5,-5,
+                            -10,-10,-10,-10,-10,-10,-10,-10};
+
+    static int[] bishopMap = {5,0,0,0,0,0,0,5,
+                                0,10,0,0,0,0,10,0,
+                                0,0,0,0,0,0,0,0,
+                                0,0,0,15,15,0,0,0,
+                                0,0,0,15,15,0,0,0,
+                                0,0,0,0,0,0,0,0,
+                                0,10,0,0,0,0,10,0,
+                                5,0,0,0,0,0,0,5};
+
+    static int[] queenMap ={5,0,0,0,0,0,0,5,
+                            0,0,0,0,0,0,0,0,
+                            0,0,0,0,0,0,0,0,
+                            0,0,0,0,0,0,0,0,
+                            0,0,0,0,0,0,0,0,
+                            0,0,0,0,0,0,0,0,
+                            0,0,0,0,0,0,0,0,
+                            5,0,0,0,0,0,0,5};
+
+    static int[] kingMap = {5,0,0,0,0,0,0,5,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,
+            5,0,0,0,0,0,0,5};
 
     static int[] squareOffsets = {};
 
@@ -17,20 +70,82 @@ public class ChessBot {
     // - Make it prioritize squares with high scores. Need some values for that
     // - To do that we add the piece Values to the allowedMoves/ allowedAttack arrays
 
+    private static void offsetMap(int i){
+            switch (Chess.pieces[i]) {
+                case Chess.blackPawn:
+                    for (int j = 0; j < 64; j++) {
+                        if (Chess.allowedMoves[j] != 0) {
+                            Chess.allowedMoves[j] += pawnMap[j];
+                        }
+                    }
+                    break;
+                case Chess.blackKnight:
+                    for (int j = 0; j < 64; j++) {
+                        if (Chess.allowedMoves[j] != 0) {
+                            Chess.allowedMoves[j] += knightMap[j];
+                        }
+                    }
+                    break;
+                case Chess.blackRook:
+                    for (int j = 0; j < 64; j++) {
+                        if (Chess.allowedMoves[j] != 0) {
+                            Chess.allowedMoves[j] += rookMap[j];
+                        }
+                    }
+                    break;
+                case Chess.blackBishop:
+                    for (int j = 0; j < 64; j++) {
+                        if (Chess.allowedMoves[j] != 0) {
+                            Chess.allowedMoves[j] += bishopMap[j];
+                        }
+                    }
+                    break;
+                    case Chess.blackQueen:
+                        for (int j = 0; j < 64; j++) {
+                            if (Chess.allowedMoves[j] != 0) {
+                                Chess.allowedMoves[j] += queenMap[j];
+                            }
+                        }
+                        break;
+                        case Chess.blackKing:
+                            for (int j = 0; j < 64; j++) {
+                                if (Chess.allowedMoves[j] != 0) {
+                                    Chess.allowedMoves[j] += kingMap[j];
+                                }
+                            }
+            }
+
+    }
+
+
     private static void evaluateSquareWorth(){
         for (int i = 0; i < 64; i++) {
             if (Chess.allowedAttacks[i] != 0  && Pieces.isInWhite(Chess.pieces[i])) { // If its a white square
                 switch (Chess.pieces[i]) {
-                    case Chess.whitePawn -> Chess.allowedAttacks[i] += pawnValue;
-                    case Chess.whiteKnight-> Chess.allowedAttacks[i] += knightValue;
-                    case Chess.whiteBishop-> Chess.allowedAttacks[i] += bishopValue;
-                    case Chess.whiteRook-> Chess.allowedAttacks[i] += rookValue;
-                    case Chess.whiteQueen-> Chess.allowedAttacks[i] += queenValue;
+                    case Chess.whitePawn:
+                        Chess.allowedAttacks[i] += pawnValue;
+                        Chess.allowedMoves[i] += pawnValue;
+                        break;
+                    case Chess.whiteKnight:
+                        Chess.allowedAttacks[i] += knightValue;
+                        Chess.allowedMoves[i] += knightValue;
+                        break;
+                    case Chess.whiteBishop:
+                        Chess.allowedAttacks[i] += bishopValue;
+                        Chess.allowedMoves[i] += bishopValue;
+                        break;
+                    case Chess.whiteRook:
+                        Chess.allowedAttacks[i] += rookValue;
+                        Chess.allowedMoves[i] += rookValue;
+                        break;
+                    case Chess.whiteQueen:
+                        Chess.allowedAttacks[i] += queenValue;
+                        Chess.allowedMoves[i] += queenValue;
+                        break;
                 }
             }
         }
     }
-
 
     public static void aiFirstSteps(){
        // System.out.println("Hi, I am ChessBot.");
@@ -47,12 +162,11 @@ public class ChessBot {
         int[] result = new int[]{-1,- 1};
      //   System.out.println(Arrays.toString(Chess.allowedAttacks));
         for (int i = 0; i < 64; i++) {
-            if (Chess.allowedAttacks[i] > maximum){
-                maximum = Chess.allowedAttacks[i];
+            if (Chess.allowedMoves[i] > maximum){
+                maximum = Chess.allowedMoves[i];
                 indexOfMax = i;
                 result[0] = maximum;
                 result[1] = indexOfMax;
-
             }
         }
         return result;
@@ -63,7 +177,11 @@ public class ChessBot {
     static int highestValueStartingSquarePosition = -1;
 
     private static void aiMoveSelection(){
-       if (searchRange == 63) {
+        highestValueYet = -1;
+        highestValueTargetSquare = -1;
+        highestValueStartingSquarePosition = -1;
+
+        if (searchRange == 63) {
            for (int i = 63; i >= 0; i--) {
                Arrays.fill(Chess.allowedAttacks, 0);
                Arrays.fill(Chess.allowedMoves, 0);
@@ -71,8 +189,10 @@ public class ChessBot {
                if (Pieces.isInBlack(Chess.pieces[i])) {  // Is a black piece
                    if (Chess.pieceSelection(i, true)) { // No bugs happend and filled allowed Attacks
                        evaluateSquareWorth();
+                       offsetMap(i);
                        int[] currentMaximum = findTheMaximumAlgorithm();
-
+                       System.out.println("highest value" + highestValueYet);
+                       System.out.println("currentMax" + currentMaximum[0]);
                        if (currentMaximum[0] > highestValueYet) {
                            highestValueYet = currentMaximum[0];
                            highestValueStartingSquarePosition = i;
