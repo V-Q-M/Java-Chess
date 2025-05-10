@@ -103,7 +103,7 @@ public class Chess {
             if (move != -1){
                 System.out.print("\033[H\033[2J");
                 System.out.flush();
-                if (isSelecting) pieceSelection(move, false);
+                if (isSelecting) pieceSelection(move, false, allowedAttacks, allowedMoves);
                 else gameLogic(move, selectedPiece);
                 //System.out.println("You entered: " + moveString);
             } else {
@@ -133,11 +133,11 @@ public class Chess {
     }
     // AI needs to enter their move here
     // AI inputs 52 meaning e7
-    public static boolean pieceSelection(int move, boolean AiMove){
+    public static boolean pieceSelection(int move, boolean AiMove, int[] allowedAttacks,int[]allowedMoves){
         // If player touches his pieces
         if ((whiteTurn && Pieces.isInWhite(pieces[move])) || (!whiteTurn && Pieces.isInBlack(pieces[move]))){
             squareColors[move] = 3; // Color the square yellow
-            moveValidation(move); // Get all valid moves
+            moveValidation(move, allowedAttacks, allowedMoves); // Get all valid moves
 
             if (!AiMove){
                 for (int i = 0; i < 64; i++){
@@ -223,20 +223,20 @@ public class Chess {
 
 
     // MOVEMENT
-    public static void moveValidation(int move){
+    public static void moveValidation(int move, int[] allowedAttacks, int[] allowedMoves){
         switch (pieces[move]){
-            case whitePawn   -> Pieces.whitePawnPattern(move);
-            case whiteRook   -> Pieces.rookPattern(move, 0);
-            case whiteKnight -> Pieces.knightPattern(move, 0);
-            case whiteBishop -> Pieces.bishopPattern(move, 0);
-            case whiteQueen  -> Pieces.queenPattern(move, 0);
-            case whiteKing   -> Pieces.kingPattern(move, 0);
-            case blackPawn   -> Pieces.blackPawnPattern(move);
-            case blackRook   -> Pieces.rookPattern(move, 1);
-            case blackKnight -> Pieces.knightPattern(move, 1);
-            case blackBishop -> Pieces.bishopPattern(move, 1);
-            case blackQueen  -> Pieces.queenPattern(move, 1);
-            case blackKing   -> Pieces.kingPattern(move, 1);
+            case whitePawn   -> Pieces.whitePawnPattern(move, allowedAttacks, allowedMoves);
+            case whiteRook   -> Pieces.rookPattern(move, 0, allowedAttacks, allowedMoves);
+            case whiteKnight -> Pieces.knightPattern(move, 0, allowedAttacks, allowedMoves);
+            case whiteBishop -> Pieces.bishopPattern(move, 0, allowedAttacks, allowedMoves);
+            case whiteQueen  -> Pieces.queenPattern(move, 0, allowedAttacks, allowedMoves);
+            case whiteKing   -> Pieces.kingPattern(move, 0, allowedAttacks, allowedMoves);
+            case blackPawn   -> Pieces.blackPawnPattern(move, allowedAttacks, allowedMoves);
+            case blackRook   -> Pieces.rookPattern(move, 1, allowedAttacks, allowedMoves);
+            case blackKnight -> Pieces.knightPattern(move, 1, allowedAttacks, allowedMoves);
+            case blackBishop -> Pieces.bishopPattern(move, 1, allowedAttacks, allowedMoves);
+            case blackQueen  -> Pieces.queenPattern(move, 1, allowedAttacks, allowedMoves);
+            case blackKing   -> Pieces.kingPattern(move, 1, allowedAttacks, allowedMoves);
             default -> System.out.println("ERROR");
         }
     }
@@ -249,7 +249,7 @@ public class Chess {
             // Find black king and generate white moves
             for (int i = 0; i < 64; i++) {
                 if (pieces[i] == blackKing) kingPosition = i;
-                if (Pieces.isInWhite(pieces[i])) moveValidation(i);
+                if (Pieces.isInWhite(pieces[i])) moveValidation(i, allowedAttacks, allowedMoves);
             }
 
             if (allowedAttacks[kingPosition] != 0) {
@@ -264,7 +264,7 @@ public class Chess {
             // Find white king and generate black moves
             for (int i = 0; i < 64; i++) {
                 if (pieces[i] == whiteKing) kingPosition = i;
-                if (Pieces.isInBlack(pieces[i])) moveValidation(i);
+                if (Pieces.isInBlack(pieces[i])) moveValidation(i, allowedAttacks, allowedMoves);
             }
 
             if (allowedAttacks[kingPosition] != 0) {
@@ -286,7 +286,7 @@ public class Chess {
         if (checkWhite){
             for (int i = 0; i < 64; i++){
                 if (pieces[i] == blackKing) kingPosition = i;
-                if (Pieces.isInWhite(pieces[i])) moveValidation(i);
+                if (Pieces.isInWhite(pieces[i])) moveValidation(i, allowedAttacks, allowedMoves);
             }
             if (allowedAttacks[kingPosition] != 0){
                 System.out.println("Black King is check!");
@@ -297,7 +297,7 @@ public class Chess {
         } else  {
             for (int i = 0; i < 64; i++){
                 if (pieces[i] == whiteKing) kingPosition = i;
-                if (Pieces.isInBlack(pieces[i])) moveValidation(i);
+                if (Pieces.isInBlack(pieces[i])) moveValidation(i, allowedAttacks, allowedMoves);
             }
             if (allowedAttacks[kingPosition] != 0){
                 System.out.println("White King is check!");
