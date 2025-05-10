@@ -190,6 +190,19 @@ public class Chess {
                 } else if (selectedPiece == blackPawn && move < 8){
                     pieces[move] = blackQueen;
                 }
+                else if (selectedPiece == whiteKing && move == 2) {
+                    pieces[2] = whiteKing;     // King to c1
+                    pieces[3] = whiteRook;     // Rook to d1
+                    pieces[4] = emptySquare;   // Clear old king position
+                    pieces[0] = emptySquare;   // Clear old rook position
+                }
+                else if (selectedPiece == whiteKing && move == 6) {
+                    pieces[6] = whiteKing;     // King to g1
+                    pieces[5] = whiteRook;     // Rook to f1
+                    pieces[4] = emptySquare;   // Clear old king position
+                    pieces[7] = emptySquare;   // Clear old rook position
+                }
+
                 Arrays.fill(squareColors, 0);
                 System.out.print("\033[H\033[2J");
                 System.out.flush();

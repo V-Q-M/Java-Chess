@@ -227,6 +227,22 @@ public class Pieces {
         if (target >= 0 && target % 8 != 0) {
             simplifiedDecideMove(target, color, allowedAttacks, allowedMoves);
         }
+
+        // Castling Logic
+
+
+            // Kingside castle (e1 to g1 -> index 4 to 6)
+            if (Chess.pieces[5] == Chess.emptySquare && Chess.pieces[6] == Chess.emptySquare) {
+                allowedMoves[6] = 1;
+            }
+            // Queenside castle (e1 to c1 -> index 4 to 2)
+            if (
+                    Chess.pieces[3] == Chess.emptySquare &&
+                            Chess.pieces[2] == Chess.emptySquare &&
+                            Chess.pieces[1] == Chess.emptySquare
+            ) {
+                allowedMoves[2] = 1;
+            }
     }
 
     public static void queenPattern(int index, int color, int[] allowedAttacks, int[] allowedMoves) {
